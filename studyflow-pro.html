@@ -1,0 +1,3886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyFlow - AI-Powered Study Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 24px 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 24px;
+            margin-bottom: 32px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 4px 12px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-light);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .user-profile {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .user-stat {
+            text-align: center;
+        }
+
+        .user-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .user-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            opacity: 0.6;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: var(--success);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        /* Timer */
+        .timer-container {
+            background: var(--gradient-1);
+            border-radius: 24px;
+            padding: 64px 32px;
+            text-align: center;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .timer-mode-tabs {
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 32px;
+        }
+
+        .timer-mode-tab {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .timer-mode-tab.active {
+            background: white;
+            color: var(--primary);
+        }
+
+        .timer-display {
+            font-size: 96px;
+            font-weight: 800;
+            color: white;
+            margin: 32px 0;
+            letter-spacing: -2px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timer-btn-start {
+            background: white;
+            color: var(--primary);
+        }
+
+        .timer-btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+        }
+
+        .timer-btn-pause,
+        .timer-btn-reset {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .timer-btn-pause:hover,
+        .timer-btn-reset:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .timer-info {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 24px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .timer-info-item {
+            text-align: center;
+        }
+
+        .timer-info-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .timer-info-label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* Tasks */
+        .task-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+            cursor: move;
+        }
+
+        .task-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: 700;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .task-priority {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .task-priority.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .task-priority.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .task-priority.low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-secondary);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Calendar */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .calendar-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            padding: 12px;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.today {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 24px 0;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .achievement-card {
+            background: var(--bg-tertiary);
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .achievement-card.unlocked {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.4;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .achievement-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .achievement-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Notes Editor */
+        .notes-editor {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .notes-toolbar {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .notes-toolbar button {
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notes-toolbar button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .notes-content {
+            min-height: 300px;
+            outline: none;
+        }
+
+        /* Focus Mode */
+        .focus-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .focus-mode.active {
+            display: flex;
+        }
+
+        .focus-exit {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+        }
+
+        .focus-timer {
+            font-size: 120px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 40px 0;
+        }
+
+        .focus-quote {
+            font-size: 24px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 48px;
+        }
+
+        .focus-controls {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--bg-secondary);
+            padding: 20px 24px;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+            box-shadow: var(--shadow-xl);
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(500px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* AI Features */
+        .ai-suggestion {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .ai-content {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Study Replay */
+        .replay-card {
+            background: var(--gradient-1);
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+        }
+
+        .replay-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .replay-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .replay-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .replay-stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .replay-stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.mobile-open {
+                width: 260px;
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .timer-display {
+                font-size: 64px;
+            }
+
+            .focus-timer {
+                font-size: 80px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Flashcard */
+        .flashcard {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 40px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+
+        .flashcard.flipped {
+            background: var(--primary);
+        }
+
+        .flashcard-content {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 24px;
+        }
+
+        /* AI Chat Interface */
+        .ai-chat-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+
+        .ai-chat-sidebar {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .ai-chat-history-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .ai-chat-history-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .ai-chat-history-item.active {
+            background: var(--bg-tertiary);
+            border-left-color: var(--primary);
+        }
+
+        .ai-chat-history-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .ai-chat-history-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .ai-chat-main {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ai-message {
+            display: flex;
+            gap: 12px;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .ai-message-avatar.user {
+            background: var(--primary);
+        }
+
+        .ai-message-avatar.assistant {
+            background: var(--gradient-1);
+        }
+
+        .ai-message-content {
+            flex: 1;
+            max-width: 80%;
+        }
+
+        .ai-message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .ai-message-name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .ai-message-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .ai-message-text {
+            background: var(--bg-tertiary);
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .ai-message.user .ai-message-text {
+            background: var(--primary);
+        }
+
+        .ai-message.assistant .ai-message-text {
+            background: var(--bg-tertiary);
+        }
+
+        .ai-chat-input-container {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ai-chat-quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ai-quick-btn {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-quick-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .ai-chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .ai-chat-input {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            resize: none;
+            max-height: 150px;
+            font-family: inherit;
+        }
+
+        .ai-chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .ai-send-btn {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-send-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .ai-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .ai-typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .ai-typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .ai-typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .ai-feature-card {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .ai-feature-card:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .ai-feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .ai-feature-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .ai-feature-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Chat responsive */
+        @media (max-width: 768px) {
+            .ai-chat-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .ai-chat-sidebar {
+                display: none;
+            }
+
+            .ai-message-content {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <h1>⚡ StudyFlow</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a class="nav-link active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="timer">
+                    <span class="nav-icon">⏱️</span>
+                    <span>Study Timer</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="tasks">
+                    <span class="nav-icon">✓</span>
+                    <span>Tasks & Goals</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="calendar">
+                    <span class="nav-icon">📅</span>
+                    <span>Calendar</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="notes">
+                    <span class="nav-icon">📝</span>
+                    <span>Notes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="flashcards">
+                    <span class="nav-icon">🎴</span>
+                    <span>Flashcards</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="revision">
+                    <span class="nav-icon">🔄</span>
+                    <span>Revision</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="analytics">
+                    <span class="nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="achievements">
+                    <span class="nav-icon">🏆</span>
+                    <span>Achievements</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="ai">
+                    <span class="nav-icon">🤖</span>
+                    <span>AI Assistant</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-profile">
+            <div class="user-stats">
+                <div class="user-stat">
+                    <div class="user-stat-value" id="sidebarLevel">1</div>
+                    <div class="user-stat-label">Level</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="sidebarStreak">0🔥</div>
+                    <div class="user-stat-label">Streak</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="sidebarXP">0</div>
+                    <div class="user-stat-label">XP</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboard">
+            <div class="page-header">
+                <h1 class="page-title">Good morning! 👋</h1>
+                <p class="page-subtitle">Here's your study overview for today</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Today's Study Time</span>
+                        <span class="stat-icon">⏱️</span>
+                    </div>
+                    <div class="stat-value" id="todayStudyTime">0h 0m</div>
+                    <div class="stat-change">↑ Keep going!</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Current Streak</span>
+                        <span class="stat-icon">🔥</span>
+                    </div>
+                    <div class="stat-value" id="currentStreak">0</div>
+                    <div class="stat-change">days in a row</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Tasks Completed</span>
+                        <span class="stat-icon">✅</span>
+                    </div>
+                    <div class="stat-value" id="completedTasks">0/0</div>
+                    <div class="stat-change">this week</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Focus Score</span>
+                        <span class="stat-icon">🎯</span>
+                    </div>
+                    <div class="stat-value" id="focusScore">0%</div>
+                    <div class="stat-change">last 7 days</div>
+                </div>
+            </div>
+
+            <!-- AI Suggestions -->
+            <div class="ai-suggestion" id="aiDailySuggestion">
+                <div class="ai-badge">
+                    <span>🤖</span>
+                    <span>AI RECOMMENDATION</span>
+                </div>
+                <div class="ai-content" id="aiSuggestionText">
+                    Based on your study patterns, I recommend focusing on Math today. You haven't studied it in 3 days.
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">This Week's Progress</h2>
+                    <div class="stat-change">↑ 23% from last week</div>
+                </div>
+                <canvas id="weeklyChart" style="max-height: 250px;"></canvas>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Today's Tasks</h2>
+                    <button class="btn btn-primary btn-sm" id="addQuickTask">+ Add Task</button>
+                </div>
+                <div id="todayTasksList"></div>
+            </div>
+
+            <!-- Study Replay Section -->
+            <div class="card" id="weeklyReplay" style="display: none;">
+                <div class="replay-card">
+                    <div class="replay-title">📊 Weekly Study Replay</div>
+                    <div class="replay-stats">
+                        <div class="replay-stat">
+                            <div class="replay-stat-value" id="replayHours">0h</div>
+                            <div class="replay-stat-label">Total Study Time</div>
+                        </div>
+                        <div class="replay-stat">
+                            <div class="replay-stat-value" id="replayBestDay">-</div>
+                            <div class="replay-stat-label">Best Day</div>
+                        </div>
+                        <div class="replay-stat">
+                            <div class="replay-stat-value" id="replayAchievements">0</div>
+                            <div class="replay-stat-label">Achievements</div>
+                        </div>
+                        <div class="replay-stat">
+                            <div class="replay-stat-value" id="replayGrowth">+0%</div>
+                            <div class="replay-stat-label">Growth</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary">Share Your Progress 📤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer Page -->
+        <div class="page" id="timer">
+            <div class="page-header">
+                <h1 class="page-title">Study Timer</h1>
+                <p class="page-subtitle">Focus mode activated - minimize distractions</p>
+            </div>
+
+            <div class="timer-container">
+                <div class="timer-mode-tabs">
+                    <button class="timer-mode-tab active" data-mode="pomodoro">Pomodoro</button>
+                    <button class="timer-mode-tab" data-mode="stopwatch">Stopwatch</button>
+                    <button class="timer-mode-tab" data-mode="custom">Custom</button>
+                </div>
+
+                <div class="timer-display" id="timerDisplay">25:00</div>
+
+                <div class="timer-controls">
+                    <button class="timer-btn timer-btn-start" id="startTimer">Start</button>
+                    <button class="timer-btn timer-btn-pause" id="pauseTimer">Pause</button>
+                    <button class="timer-btn timer-btn-reset" id="resetTimer">Reset</button>
+                </div>
+
+                <div class="timer-info">
+                    <div class="timer-info-item">
+                        <div class="timer-info-value" id="sessionCount">1</div>
+                        <div class="timer-info-label">Session</div>
+                    </div>
+                    <div class="timer-info-item">
+                        <div class="timer-info-value" id="breakCount">0</div>
+                        <div class="timer-info-label">Breaks</div>
+                    </div>
+                    <div class="timer-info-item">
+                        <div class="timer-info-value" id="todayTime">0m</div>
+                        <div class="timer-info-label">Today</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Session Settings</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Current Subject</label>
+                        <select class="form-select" id="currentSubject">
+                            <option value="">Select subject...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">What are you working on?</label>
+                        <input type="text" class="form-input" id="currentTask" placeholder="e.g., Chapter 5 - Calculus">
+                    </div>
+                    <button class="btn btn-primary" id="enterFocusMode">🎯 Enter Focus Mode</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Background Sounds</h3>
+                    </div>
+                    <div style="display: grid; gap: 12px;">
+                        <button class="btn btn-secondary">🌧️ Rain Sounds</button>
+                        <button class="btn btn-secondary">📚 Library Ambience</button>
+                        <button class="btn btn-secondary">🎵 Lo-fi Music</button>
+                        <button class="btn btn-secondary">🌊 White Noise</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Page -->
+        <div class="page" id="tasks">
+            <div class="page-header">
+                <h1 class="page-title">Tasks & Goals</h1>
+                <p class="page-subtitle">Organize your study workflow</p>
+            </div>
+
+            <div class="task-filters">
+                <button class="filter-btn active" data-filter="all">All Tasks</button>
+                <button class="filter-btn" data-filter="today">Today</button>
+                <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+                <button class="filter-btn" data-filter="high">High Priority</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">My Tasks</h2>
+                    <button class="btn btn-primary" id="addTaskBtn">+ Add Task</button>
+                </div>
+                <div class="task-list" id="tasksList"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Subjects</h2>
+                    <button class="btn btn-primary" id="addSubjectBtn">+ Add Subject</button>
+                </div>
+                <div id="subjectsList"></div>
+            </div>
+        </div>
+
+        <!-- Calendar Page -->
+        <div class="page" id="calendar">
+            <div class="page-header">
+                <h1 class="page-title">Calendar & Schedule</h1>
+                <p class="page-subtitle">Plan your study sessions</p>
+            </div>
+
+            <div class="card">
+                <div class="calendar-header">
+                    <button class="btn btn-secondary" id="prevMonth">←</button>
+                    <h2 class="calendar-title" id="calendarTitle">May 2026</h2>
+                    <button class="btn btn-secondary" id="nextMonth">→</button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Upcoming Events</h2>
+                    <button class="btn btn-primary" id="addEventBtn">+ Add Event</button>
+                </div>
+                <div id="upcomingEvents"></div>
+            </div>
+        </div>
+
+        <!-- Notes Page -->
+        <div class="page" id="notes">
+            <div class="page-header">
+                <h1 class="page-title">Notes</h1>
+                <p class="page-subtitle">Capture and organize your study notes</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Notes</h3>
+                        <button class="btn btn-primary btn-sm" id="addNoteBtn">+</button>
+                    </div>
+                    <div id="notesList"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" id="currentNoteTitle">Select a note</h3>
+                        <div>
+                            <button class="btn btn-secondary btn-sm" id="saveNoteBtn">Save</button>
+                            <button class="btn btn-danger btn-sm" id="deleteNoteBtn">Delete</button>
+                        </div>
+                    </div>
+                    <div class="notes-editor">
+                        <div class="notes-toolbar">
+                            <button title="Bold"><b>B</b></button>
+                            <button title="Italic"><i>I</i></button>
+                            <button title="Underline"><u>U</u></button>
+                            <button title="Heading">H1</button>
+                            <button title="List">• List</button>
+                            <button title="Highlight">🖍️</button>
+                        </div>
+                        <div class="notes-content" contenteditable="true" id="noteContent">
+                            Start typing your notes here...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcards Page -->
+        <div class="page" id="flashcards">
+            <div class="page-header">
+                <h1 class="page-title">Flashcards</h1>
+                <p class="page-subtitle">Create and review flashcards</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Review Session</h2>
+                    <button class="btn btn-primary" id="addFlashcardBtn">+ New Flashcard</button>
+                </div>
+                <div id="flashcardContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎴</div>
+                        <div class="empty-state-text">No flashcards yet. Create your first one!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Flashcard Decks</h2>
+                </div>
+                <div id="flashcardDecks"></div>
+            </div>
+        </div>
+
+        <!-- Revision Page -->
+        <div class="page" id="revision">
+            <div class="page-header">
+                <h1 class="page-title">Revision System</h1>
+                <p class="page-subtitle">Spaced repetition for better retention</p>
+            </div>
+
+            <div class="ai-suggestion">
+                <div class="ai-badge">
+                    <span>🤖</span>
+                    <span>AI REVISION SCHEDULE</span>
+                </div>
+                <div class="ai-content">
+                    <p style="margin-bottom: 12px;"><strong>Topics due for revision today:</strong></p>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>Math - Quadratic Equations (Last reviewed 5 days ago)</li>
+                        <li>Physics - Newton's Laws (Last reviewed 7 days ago)</li>
+                        <li>Chemistry - Periodic Table (Last reviewed 2 days ago)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Revision Calendar</h2>
+                </div>
+                <div id="revisionSchedule"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Forgotten Topics</h2>
+                </div>
+                <div id="forgottenTopics">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✨</div>
+                        <div class="empty-state-text">Great! No forgotten topics yet.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div class="page" id="analytics">
+            <div class="page-header">
+                <h1 class="page-title">Analytics & Insights</h1>
+                <p class="page-subtitle">Understand your study patterns</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Study Hours</span>
+                        <span class="stat-icon">📚</span>
+                    </div>
+                    <div class="stat-value" id="totalStudyHours">0h</div>
+                    <div class="stat-change">all time</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Best Study Time</span>
+                        <span class="stat-icon">⏰</span>
+                    </div>
+                    <div class="stat-value" id="bestStudyTime">-</div>
+                    <div class="stat-change">most productive</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Average Focus</span>
+                        <span class="stat-icon">🎯</span>
+                    </div>
+                    <div class="stat-value" id="avgFocus">0m</div>
+                    <div class="stat-change">per session</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Consistency</span>
+                        <span class="stat-icon">📊</span>
+                    </div>
+                    <div class="stat-value" id="consistency">0%</div>
+                    <div class="stat-change">this month</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Subject-wise Distribution</h2>
+                </div>
+                <div id="subjectProgress"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Monthly Trends</h2>
+                </div>
+                <canvas id="monthlyChart" style="max-height: 300px;"></canvas>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Productivity Insights</h2>
+                </div>
+                <div id="productivityInsights">
+                    <div class="ai-suggestion">
+                        <div class="ai-badge">
+                            <span>🤖</span>
+                            <span>AI INSIGHTS</span>
+                        </div>
+                        <div class="ai-content">
+                            <ul style="line-height: 2;">
+                                <li>📈 You study best between 9 AM - 11 AM</li>
+                                <li>📚 Physics needs more attention (only 2h this week)</li>
+                                <li>🔥 Great streak! You've studied 5 days in a row</li>
+                                <li>⚡ Your average session length is 35 minutes</li>
+                                <li>🎯 Recommendation: Try 45-minute sessions for better focus</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Page -->
+        <div class="page" id="achievements">
+            <div class="page-header">
+                <h1 class="page-title">Achievements</h1>
+                <p class="page-subtitle">Track your progress and unlock rewards</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Level Progress</h2>
+                </div>
+                <div style="padding: 20px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="font-size: 18px; font-weight: 700;">Level <span id="achievementLevel">1</span></span>
+                        <span style="color: var(--text-secondary);"><span id="achievementXP">0</span> / <span id="achievementNextLevel">100</span> XP</span>
+                    </div>
+                    <div class="progress-bar" style="height: 12px;">
+                        <div class="progress-fill" id="xpProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Your Achievements</h2>
+                    <span class="stat-change"><span id="unlockedCount">0</span> / <span id="totalCount">0</span> unlocked</span>
+                </div>
+                <div class="achievements-grid" id="achievementsList"></div>
+            </div>
+        </div>
+
+        <!-- AI Assistant Page -->
+        <div class="page" id="ai">
+            <div class="page-header">
+                <h1 class="page-title">AI Study Assistant</h1>
+                <p class="page-subtitle">Your personal AI tutor and study companion</p>
+            </div>
+
+            <div class="ai-chat-container">
+                <!-- Chat History Sidebar -->
+                <div class="ai-chat-sidebar">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 700;">Chat History</h3>
+                        <button class="btn btn-primary btn-sm" id="newChatBtn">+ New</button>
+                    </div>
+                    
+                    <div id="chatHistoryList"></div>
+
+                    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">AI Features</h3>
+                        
+                        <div class="ai-feature-card" data-action="study-plan">
+                            <div class="ai-feature-icon">📅</div>
+                            <div class="ai-feature-title">Study Planner</div>
+                            <div class="ai-feature-desc">Generate personalized study schedule</div>
+                        </div>
+
+                        <div class="ai-feature-card" data-action="weak-areas">
+                            <div class="ai-feature-icon">🎯</div>
+                            <div class="ai-feature-title">Weak Areas</div>
+                            <div class="ai-feature-desc">Identify topics needing attention</div>
+                        </div>
+
+                        <div class="ai-feature-card" data-action="exam-prep">
+                            <div class="ai-feature-icon">📝</div>
+                            <div class="ai-feature-title">Exam Preparation</div>
+                            <div class="ai-feature-desc">AI-powered exam strategy</div>
+                        </div>
+
+                        <div class="ai-feature-card" data-action="motivate">
+                            <div class="ai-feature-icon">💪</div>
+                            <div class="ai-feature-title">Motivation</div>
+                            <div class="ai-feature-desc">Get motivated and inspired</div>
+                        </div>
+
+                        <div class="ai-feature-card" data-action="revision">
+                            <div class="ai-feature-icon">🔄</div>
+                            <div class="ai-feature-title">Revision Schedule</div>
+                            <div class="ai-feature-desc">Spaced repetition planning</div>
+                        </div>
+
+                        <div class="ai-feature-card" data-action="summarize">
+                            <div class="ai-feature-icon">📚</div>
+                            <div class="ai-feature-title">Summarize Notes</div>
+                            <div class="ai-feature-desc">Quick note summaries</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Chat Area -->
+                <div class="ai-chat-main">
+                    <div class="ai-chat-messages" id="aiChatMessages">
+                        <!-- Welcome Message -->
+                        <div class="ai-message assistant">
+                            <div class="ai-message-avatar assistant">🤖</div>
+                            <div class="ai-message-content">
+                                <div class="ai-message-header">
+                                    <span class="ai-message-name">AI Assistant</span>
+                                    <span class="ai-message-time">Just now</span>
+                                </div>
+                                <div class="ai-message-text">
+                                    <p style="margin-bottom: 12px;">👋 Hello! I'm your AI Study Assistant. I'm here to help you study smarter, not harder!</p>
+                                    <p style="margin-bottom: 12px;"><strong>I can help you with:</strong></p>
+                                    <ul style="margin-left: 20px; line-height: 1.8;">
+                                        <li>Creating personalized study plans</li>
+                                        <li>Identifying weak areas in your subjects</li>
+                                        <li>Generating revision schedules</li>
+                                        <li>Providing study tips and motivation</li>
+                                        <li>Answering your study-related questions</li>
+                                        <li>Analyzing your study patterns</li>
+                                    </ul>
+                                    <p style="margin-top: 12px;">Ask me anything or click on the quick actions below!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-chat-input-container">
+                        <div class="ai-chat-quick-actions">
+                            <button class="ai-quick-btn" data-quick="What should I study today?">What should I study today?</button>
+                            <button class="ai-quick-btn" data-quick="Create a study plan">Create a study plan</button>
+                            <button class="ai-quick-btn" data-quick="How can I improve focus?">How can I improve focus?</button>
+                            <button class="ai-quick-btn" data-quick="Analyze my progress">Analyze my progress</button>
+                            <button class="ai-quick-btn" data-quick="Give me motivation">Give me motivation</button>
+                        </div>
+
+                        <div class="ai-chat-input-wrapper">
+                            <textarea 
+                                class="ai-chat-input" 
+                                id="aiChatInput" 
+                                placeholder="Ask me anything about studying..."
+                                rows="1"
+                            ></textarea>
+                            <button class="ai-send-btn" id="aiSendBtn">
+                                <span>➤</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Focus Mode Overlay -->
+    <div class="focus-mode" id="focusMode">
+        <button class="btn btn-secondary focus-exit" id="exitFocus">Exit Focus Mode</button>
+        <div class="focus-timer" id="focusTimer">25:00</div>
+        <div class="focus-quote" id="focusQuote">"The secret of getting ahead is getting started."</div>
+        <div class="focus-controls">
+            <button class="timer-btn timer-btn-start" id="focusStart">Start</button>
+            <button class="timer-btn timer-btn-pause" id="focusPause">Pause</button>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Task</h2>
+                <button class="modal-close" id="closeTaskModal">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Task Title</label>
+                <input type="text" class="form-input" id="taskTitle" placeholder="e.g., Complete Chapter 5">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select class="form-select" id="taskSubject">
+                    <option value="">Select subject...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select class="form-select" id="taskPriority">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Due Date</label>
+                <input type="date" class="form-input" id="taskDueDate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="taskNotes" placeholder="Additional details..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelTaskBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveTaskBtn">Save Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject Modal -->
+    <div class="modal" id="subjectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Subject</h2>
+                <button class="modal-close" id="closeSubjectModal">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject Name</label>
+                <input type="text" class="form-input" id="subjectName" placeholder="e.g., Mathematics">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Color</label>
+                <input type="color" class="form-input" id="subjectColor" value="#6366f1">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelSubjectBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSubjectBtn">Save Subject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Event</h2>
+                <button class="modal-close" id="closeEventModal">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Event Title</label>
+                <input type="text" class="form-input" id="eventTitle" placeholder="e.g., Math Exam">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="eventDate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="form-select" id="eventType">
+                    <option value="exam">Exam</option>
+                    <option value="assignment">Assignment</option>
+                    <option value="revision">Revision</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelEventBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveEventBtn">Save Event</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flashcard Modal -->
+    <div class="modal" id="flashcardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Flashcard</h2>
+                <button class="modal-close" id="closeFlashcardModal">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Front (Question)</label>
+                <textarea class="form-textarea" id="flashcardFront" placeholder="Enter question..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Back (Answer)</label>
+                <textarea class="form-textarea" id="flashcardBack" placeholder="Enter answer..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select class="form-select" id="flashcardSubject">
+                    <option value="">Select subject...</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelFlashcardBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveFlashcardBtn">Save Flashcard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STORAGE ====================
+        const Storage = {
+            get(key, defaultValue = null) {
+                try {
+                    const value = localStorage.getItem(key);
+                    return value ? JSON.parse(value) : defaultValue;
+                } catch (e) {
+                    return defaultValue;
+                }
+            },
+            set(key, value) {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+        };
+
+        // ==================== APP DATA ====================
+        const AppData = {
+            user: Storage.get('user', {
+                level: 1,
+                xp: 0,
+                streak: 0,
+                lastStudyDate: null,
+                totalStudyMinutes: 0
+            }),
+            subjects: Storage.get('subjects', []),
+            tasks: Storage.get('tasks', []),
+            events: Storage.get('events', []),
+            studySessions: Storage.get('studySessions', []),
+            achievements: Storage.get('achievements', []),
+            notes: Storage.get('notes', []),
+            flashcards: Storage.get('flashcards', []),
+            revisionSchedule: Storage.get('revisionSchedule', []),
+            aiChats: Storage.get('aiChats', []),
+            currentChatId: Storage.get('currentChatId', null),
+            settings: Storage.get('settings', {
+                pomodoroTime: 25,
+                shortBreak: 5,
+                longBreak: 15,
+                autoBreak: true
+            })
+        };
+
+        function saveData() {
+            Storage.set('user', AppData.user);
+            Storage.set('subjects', AppData.subjects);
+            Storage.set('tasks', AppData.tasks);
+            Storage.set('events', AppData.events);
+            Storage.set('studySessions', AppData.studySessions);
+            Storage.set('achievements', AppData.achievements);
+            Storage.set('notes', AppData.notes);
+            Storage.set('flashcards', AppData.flashcards);
+            Storage.set('revisionSchedule', AppData.revisionSchedule);
+            Storage.set('aiChats', AppData.aiChats);
+            Storage.set('currentChatId', AppData.currentChatId);
+        }
+
+        // ==================== NAVIGATION ====================
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const page = link.dataset.page;
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(page).classList.add('active');
+
+                // Load page-specific data
+                if (page === 'analytics') updateAnalytics();
+                if (page === 'calendar') renderCalendar();
+                if (page === 'achievements') updateAchievements();
+                if (page === 'notes') renderNotes();
+                if (page === 'flashcards') renderFlashcards();
+            });
+        });
+
+        // ==================== TIMER ====================
+        let timerInterval = null;
+        let timerSeconds = 25 * 60;
+        let timerRunning = false;
+        let timerMode = 'pomodoro';
+        let sessionCount = 1;
+        let breakCount = 0;
+        let currentSessionStart = null;
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+            document.getElementById('focusTimer').textContent = display;
+            document.title = timerRunning ? `${display} - StudyFlow` : 'StudyFlow';
+        }
+
+        document.querySelectorAll('.timer-mode-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.timer-mode-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                timerMode = tab.dataset.mode;
+                resetTimer();
+            });
+        });
+
+        function startTimer() {
+            if (timerRunning) return;
+            timerRunning = true;
+            currentSessionStart = Date.now();
+
+            timerInterval = setInterval(() => {
+                if (timerMode === 'stopwatch') {
+                    timerSeconds++;
+                } else {
+                    timerSeconds--;
+                    if (timerSeconds <= 0) {
+                        completeSession();
+                    }
+                }
+                updateTimerDisplay();
+                updateTodayTime();
+            }, 1000);
+
+            document.getElementById('startTimer').textContent = 'Running...';
+            document.getElementById('focusStart').textContent = 'Running...';
+        }
+
+        function pauseTimer() {
+            if (!timerRunning) return;
+            clearInterval(timerInterval);
+            timerRunning = false;
+
+            if (currentSessionStart) {
+                const duration = Math.floor((Date.now() - currentSessionStart) / 1000 / 60);
+                if (duration > 0) addStudySession(duration);
+                currentSessionStart = null;
+            }
+
+            document.getElementById('startTimer').textContent = 'Start';
+            document.getElementById('focusStart').textContent = 'Start';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            if (timerMode === 'pomodoro') {
+                timerSeconds = AppData.settings.pomodoroTime * 60;
+            } else if (timerMode === 'stopwatch') {
+                timerSeconds = 0;
+            } else {
+                timerSeconds = 25 * 60;
+            }
+            updateTimerDisplay();
+        }
+
+        function completeSession() {
+            pauseTimer();
+
+            const duration = AppData.settings.pomodoroTime;
+            addStudySession(duration);
+
+            sessionCount++;
+            document.getElementById('sessionCount').textContent = sessionCount;
+
+            addXP(25);
+            showNotification('Session Complete! 🎉', 'Great job! Take a break.');
+
+            if (AppData.settings.autoBreak) {
+                breakCount++;
+                document.getElementById('breakCount').textContent = breakCount;
+                timerSeconds = (breakCount % 4 === 0 ? AppData.settings.longBreak : AppData.settings.shortBreak) * 60;
+                updateTimerDisplay();
+            } else {
+                resetTimer();
+            }
+        }
+
+        function addStudySession(minutes) {
+            const today = new Date().toDateString();
+            AppData.studySessions.push({
+                date: today,
+                duration: minutes,
+                subject: document.getElementById('currentSubject').value,
+                task: document.getElementById('currentTask').value,
+                timestamp: Date.now()
+            });
+
+            AppData.user.totalStudyMinutes += minutes;
+
+            // Update streak
+            if (AppData.user.lastStudyDate !== today) {
+                const lastDate = new Date(AppData.user.lastStudyDate);
+                const currentDate = new Date(today);
+                const diffDays = Math.floor((currentDate - lastDate) / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    AppData.user.streak++;
+                } else if (diffDays > 1 || !AppData.user.lastStudyDate) {
+                    AppData.user.streak = 1;
+                }
+                AppData.user.lastStudyDate = today;
+            }
+
+            saveData();
+            updateDashboard();
+        }
+
+        function updateTodayTime() {
+            const today = new Date().toDateString();
+            const todaySessions = AppData.studySessions.filter(s => s.date === today);
+            let todayMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+            
+            if (timerRunning && currentSessionStart && timerMode !== 'stopwatch') {
+                const currentMinutes = Math.floor((Date.now() - currentSessionStart) / 1000 / 60);
+                todayMinutes += currentMinutes;
+            }
+
+            document.getElementById('todayTime').textContent = `${todayMinutes}m`;
+        }
+
+        document.getElementById('startTimer').addEventListener('click', startTimer);
+        document.getElementById('pauseTimer').addEventListener('click', pauseTimer);
+        document.getElementById('resetTimer').addEventListener('click', resetTimer);
+        document.getElementById('focusStart').addEventListener('click', startTimer);
+        document.getElementById('focusPause').addEventListener('click', pauseTimer);
+
+        // Focus Mode
+        document.getElementById('enterFocusMode').addEventListener('click', () => {
+            document.getElementById('focusMode').classList.add('active');
+        });
+
+        document.getElementById('exitFocus').addEventListener('click', () => {
+            document.getElementById('focusMode').classList.remove('active');
+        });
+
+        // ==================== TASKS ====================
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            const todayTasksList = document.getElementById('todayTasksList');
+            tasksList.innerHTML = '';
+            todayTasksList.innerHTML = '';
+
+            const today = new Date().toDateString();
+            const todayTasks = AppData.tasks.filter(t => {
+                const dueDate = new Date(t.dueDate).toDateString();
+                return dueDate === today;
+            });
+
+            AppData.tasks.forEach((task, index) => {
+                const taskEl = createTaskElement(task, index);
+                tasksList.appendChild(taskEl);
+
+                if (todayTasks.includes(task)) {
+                    const todayTaskEl = createTaskElement(task, index);
+                    todayTasksList.appendChild(todayTaskEl);
+                }
+            });
+
+            if (todayTasks.length === 0) {
+                todayTasksList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✨</div><div class="empty-state-text">No tasks for today!</div></div>';
+            }
+
+            if (AppData.tasks.length === 0) {
+                tasksList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">No tasks yet. Add your first one!</div></div>';
+            }
+        }
+
+        function createTaskElement(task, index) {
+            const div = document.createElement('div');
+            div.className = `task-item ${task.completed ? 'completed' : ''}`;
+            div.draggable = true;
+
+            const subject = AppData.subjects.find(s => s.id === task.subject);
+
+            div.innerHTML = `
+                <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-index="${index}"></div>
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-meta">
+                        <span>${subject ? subject.name : 'No subject'}</span>
+                        <span>Due: ${new Date(task.dueDate).toLocaleDateString()}</span>
+                        <span class="task-priority ${task.priority}">${task.priority}</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="btn btn-danger btn-sm" data-index="${index}">Delete</button>
+                </div>
+            `;
+
+            div.querySelector('.task-checkbox').addEventListener('click', () => toggleTask(index));
+            div.querySelector('.btn-danger').addEventListener('click', () => deleteTask(index));
+
+            return div;
+        }
+
+        function toggleTask(index) {
+            AppData.tasks[index].completed = !AppData.tasks[index].completed;
+            if (AppData.tasks[index].completed) {
+                addXP(10);
+                showNotification('Task Completed! ✓', 'Keep up the great work!');
+            }
+            saveData();
+            renderTasks();
+            updateDashboard();
+        }
+
+        function deleteTask(index) {
+            if (confirm('Delete this task?')) {
+                AppData.tasks.splice(index, 1);
+                saveData();
+                renderTasks();
+            }
+        }
+
+        // Task Modal
+        document.getElementById('addTaskBtn').addEventListener('click', () => {
+            document.getElementById('taskModal').classList.add('active');
+            updateSubjectSelects();
+        });
+
+        document.getElementById('addQuickTask').addEventListener('click', () => {
+            document.getElementById('taskModal').classList.add('active');
+            updateSubjectSelects();
+        });
+
+        document.getElementById('closeTaskModal').addEventListener('click', () => {
+            document.getElementById('taskModal').classList.remove('active');
+        });
+
+        document.getElementById('cancelTaskBtn').addEventListener('click', () => {
+            document.getElementById('taskModal').classList.remove('active');
+        });
+
+        document.getElementById('saveTaskBtn').addEventListener('click', () => {
+            const task = {
+                id: Date.now(),
+                title: document.getElementById('taskTitle').value,
+                subject: document.getElementById('taskSubject').value,
+                priority: document.getElementById('taskPriority').value,
+                dueDate: document.getElementById('taskDueDate').value,
+                notes: document.getElementById('taskNotes').value,
+                completed: false,
+                createdAt: Date.now()
+            };
+
+            if (!task.title || !task.dueDate) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            AppData.tasks.push(task);
+            saveData();
+            renderTasks();
+            document.getElementById('taskModal').classList.remove('active');
+
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskNotes').value = '';
+            document.getElementById('taskDueDate').value = '';
+        });
+
+        // ==================== SUBJECTS ====================
+        function renderSubjects() {
+            const subjectsList = document.getElementById('subjectsList');
+            subjectsList.innerHTML = '';
+
+            AppData.subjects.forEach((subject, index) => {
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.style.borderLeft = `4px solid ${subject.color}`;
+                div.innerHTML = `
+                    <div style="width: 24px; height: 24px; border-radius: 6px; background: ${subject.color}; flex-shrink: 0;"></div>
+                    <div class="task-content">
+                        <div class="task-title">${subject.name}</div>
+                        <div class="task-meta">
+                            <span>${AppData.tasks.filter(t => t.subject === subject.id).length} tasks</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                `;
+
+                div.querySelector('.btn-danger').addEventListener('click', () => {
+                    if (confirm('Delete this subject?')) {
+                        AppData.subjects.splice(index, 1);
+                        saveData();
+                        renderSubjects();
+                        updateSubjectSelects();
+                    }
+                });
+
+                subjectsList.appendChild(div);
+            });
+
+            if (AppData.subjects.length === 0) {
+                subjectsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📚</div><div class="empty-state-text">No subjects yet. Add your first one!</div></div>';
+            }
+        }
+
+        function updateSubjectSelects() {
+            const selects = [
+                document.getElementById('taskSubject'),
+                document.getElementById('currentSubject'),
+                document.getElementById('flashcardSubject')
+            ];
+
+            selects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select subject...</option>';
+                AppData.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.id;
+                    option.textContent = subject.name;
+                    select.appendChild(option);
+                });
+                select.value = currentValue;
+            });
+        }
+
+        document.getElementById('addSubjectBtn').addEventListener('click', () => {
+            document.getElementById('subjectModal').classList.add('active');
+        });
+
+        document.getElementById('closeSubjectModal').addEventListener('click', () => {
+            document.getElementById('subjectModal').classList.remove('active');
+        });
+
+        document.getElementById('cancelSubjectBtn').addEventListener('click', () => {
+            document.getElementById('subjectModal').classList.remove('active');
+        });
+
+        document.getElementById('saveSubjectBtn').addEventListener('click', () => {
+            const subject = {
+                id: Date.now(),
+                name: document.getElementById('subjectName').value,
+                color: document.getElementById('subjectColor').value
+            };
+
+            if (!subject.name) {
+                alert('Please enter a subject name');
+                return;
+            }
+
+            AppData.subjects.push(subject);
+            saveData();
+            renderSubjects();
+            updateSubjectSelects();
+            document.getElementById('subjectModal').classList.remove('active');
+            document.getElementById('subjectName').value = '';
+        });
+
+        // ==================== CALENDAR ====================
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const title = document.getElementById('calendarTitle');
+
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+
+            title.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            grid.innerHTML = '';
+
+            // Day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            // Empty cells
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                grid.appendChild(empty);
+            }
+
+            // Days
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+
+                const dateStr = new Date(currentYear, currentMonth, day).toDateString();
+                if (dateStr === today.toDateString()) {
+                    dayEl.classList.add('today');
+                }
+
+                const hasEvent = AppData.events.some(e => new Date(e.date).toDateString() === dateStr);
+                if (hasEvent) {
+                    dayEl.classList.add('has-event');
+                }
+
+                grid.appendChild(dayEl);
+            }
+
+            renderUpcomingEvents();
+        }
+
+        function renderUpcomingEvents() {
+            const container = document.getElementById('upcomingEvents');
+            container.innerHTML = '';
+
+            const upcoming = AppData.events
+                .filter(e => new Date(e.date) >= new Date())
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 5);
+
+            if (upcoming.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">No upcoming events</div></div>';
+                return;
+            }
+
+            upcoming.forEach(event => {
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-title">${event.title}</div>
+                        <div class="task-meta">
+                            <span>${new Date(event.date).toLocaleDateString()}</span>
+                            <span class="task-priority ${event.type}">${event.type}</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                `;
+
+                div.querySelector('.btn-danger').addEventListener('click', () => {
+                    if (confirm('Delete this event?')) {
+                        AppData.events = AppData.events.filter(e => e.id !== event.id);
+                        saveData();
+                        renderCalendar();
+                    }
+                });
+
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        });
+
+        document.getElementById('addEventBtn').addEventListener('click', () => {
+            document.getElementById('eventModal').classList.add('active');
+        });
+
+        document.getElementById('closeEventModal').addEventListener('click', () => {
+            document.getElementById('eventModal').classList.remove('active');
+        });
+
+        document.getElementById('cancelEventBtn').addEventListener('click', () => {
+            document.getElementById('eventModal').classList.remove('active');
+        });
+
+        document.getElementById('saveEventBtn').addEventListener('click', () => {
+            const event = {
+                id: Date.now(),
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                type: document.getElementById('eventType').value
+            };
+
+            if (!event.title || !event.date) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            AppData.events.push(event);
+            saveData();
+            renderCalendar();
+            document.getElementById('eventModal').classList.remove('active');
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventDate').value = '';
+        });
+
+        // ==================== NOTES ====================
+        let currentNoteId = null;
+
+        function renderNotes() {
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = '';
+
+            AppData.notes.forEach(note => {
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.style.cursor = 'pointer';
+                div.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-title">${note.title}</div>
+                        <div class="task-meta">
+                            <span>${new Date(note.updatedAt).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `;
+
+                div.addEventListener('click', () => loadNote(note.id));
+                notesList.appendChild(div);
+            });
+
+            if (AppData.notes.length === 0) {
+                notesList.innerHTML = '<div class="empty-state" style="padding: 20px 10px;"><div class="empty-state-icon" style="font-size: 32px;">📝</div><div class="empty-state-text" style="font-size: 12px;">No notes</div></div>';
+            }
+        }
+
+        function loadNote(id) {
+            const note = AppData.notes.find(n => n.id === id);
+            if (!note) return;
+
+            currentNoteId = id;
+            document.getElementById('currentNoteTitle').textContent = note.title;
+            document.getElementById('noteContent').innerHTML = note.content;
+        }
+
+        document.getElementById('addNoteBtn').addEventListener('click', () => {
+            const title = prompt('Note title:');
+            if (!title) return;
+
+            const note = {
+                id: Date.now(),
+                title: title,
+                content: '',
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+
+            AppData.notes.push(note);
+            saveData();
+            renderNotes();
+            loadNote(note.id);
+        });
+
+        document.getElementById('saveNoteBtn').addEventListener('click', () => {
+            if (!currentNoteId) {
+                alert('No note selected');
+                return;
+            }
+
+            const note = AppData.notes.find(n => n.id === currentNoteId);
+            if (note) {
+                note.content = document.getElementById('noteContent').innerHTML;
+                note.updatedAt = Date.now();
+                saveData();
+                showNotification('Note Saved', 'Your note has been saved successfully');
+            }
+        });
+
+        document.getElementById('deleteNoteBtn').addEventListener('click', () => {
+            if (!currentNoteId) {
+                alert('No note selected');
+                return;
+            }
+
+            if (confirm('Delete this note?')) {
+                AppData.notes = AppData.notes.filter(n => n.id !== currentNoteId);
+                saveData();
+                renderNotes();
+                currentNoteId = null;
+                document.getElementById('currentNoteTitle').textContent = 'Select a note';
+                document.getElementById('noteContent').innerHTML = 'Start typing your notes here...';
+            }
+        });
+
+        // ==================== FLASHCARDS ====================
+        function renderFlashcards() {
+            const container = document.getElementById('flashcardContainer');
+            const decks = document.getElementById('flashcardDecks');
+            
+            // Update decks
+            const subjectDecks = {};
+            AppData.flashcards.forEach(card => {
+                if (!subjectDecks[card.subject]) {
+                    subjectDecks[card.subject] = [];
+                }
+                subjectDecks[card.subject].push(card);
+            });
+
+            decks.innerHTML = '';
+            Object.entries(subjectDecks).forEach(([subjectId, cards]) => {
+                const subject = AppData.subjects.find(s => s.id == subjectId);
+                if (!subject) return;
+
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-title">${subject.name}</div>
+                        <div class="task-meta">
+                            <span>${cards.length} cards</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-primary btn-sm">Review</button>
+                    </div>
+                `;
+                decks.appendChild(div);
+            });
+
+            if (AppData.flashcards.length === 0) {
+                decks.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎴</div><div class="empty-state-text">No flashcard decks yet</div></div>';
+            }
+        }
+
+        document.getElementById('addFlashcardBtn').addEventListener('click', () => {
+            document.getElementById('flashcardModal').classList.add('active');
+            updateSubjectSelects();
+        });
+
+        document.getElementById('closeFlashcardModal').addEventListener('click', () => {
+            document.getElementById('flashcardModal').classList.remove('active');
+        });
+
+        document.getElementById('cancelFlashcardBtn').addEventListener('click', () => {
+            document.getElementById('flashcardModal').classList.remove('active');
+        });
+
+        document.getElementById('saveFlashcardBtn').addEventListener('click', () => {
+            const flashcard = {
+                id: Date.now(),
+                front: document.getElementById('flashcardFront').value,
+                back: document.getElementById('flashcardBack').value,
+                subject: document.getElementById('flashcardSubject').value,
+                createdAt: Date.now()
+            };
+
+            if (!flashcard.front || !flashcard.back) {
+                alert('Please fill in both front and back');
+                return;
+            }
+
+            AppData.flashcards.push(flashcard);
+            saveData();
+            renderFlashcards();
+            document.getElementById('flashcardModal').classList.remove('active');
+            document.getElementById('flashcardFront').value = '';
+            document.getElementById('flashcardBack').value = '';
+        });
+
+        // ==================== DASHBOARD ====================
+        function updateDashboard() {
+            // Today's study time
+            const today = new Date().toDateString();
+            const todaySessions = AppData.studySessions.filter(s => s.date === today);
+            const todayMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+            const hours = Math.floor(todayMinutes / 60);
+            const mins = todayMinutes % 60;
+            document.getElementById('todayStudyTime').textContent = `${hours}h ${mins}m`;
+
+            // Streak
+            document.getElementById('currentStreak').textContent = AppData.user.streak;
+            document.getElementById('sidebarStreak').textContent = `${AppData.user.streak}🔥`;
+
+            // Tasks
+            const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            const weeklyCompleted = AppData.tasks.filter(t => t.completed && t.createdAt >= weekAgo).length;
+            const weeklyTotal = AppData.tasks.filter(t => t.createdAt >= weekAgo).length;
+            document.getElementById('completedTasks').textContent = `${weeklyCompleted}/${weeklyTotal}`;
+
+            // Focus score
+            const weekSessions = AppData.studySessions.filter(s => new Date(s.timestamp).getTime() >= weekAgo);
+            const weekMinutes = weekSessions.reduce((sum, s) => sum + s.duration, 0);
+            const targetMinutes = 7 * 60;
+            const score = Math.min(100, Math.round((weekMinutes / targetMinutes) * 100));
+            document.getElementById('focusScore').textContent = `${score}%`;
+
+            // User stats
+            document.getElementById('sidebarLevel').textContent = AppData.user.level;
+            document.getElementById('sidebarXP').textContent = AppData.user.xp;
+
+            renderWeeklyChart();
+            renderTasks();
+        }
+
+        function renderWeeklyChart() {
+            const canvas = document.getElementById('weeklyChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const data = new Array(7).fill(0);
+
+            const now = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toDateString();
+                const dayMinutes = AppData.studySessions
+                    .filter(s => s.date === dateStr)
+                    .reduce((sum, s) => sum + s.duration, 0);
+                data[6 - i] = dayMinutes / 60;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const barWidth = canvas.width / 7;
+            const maxValue = Math.max(...data, 3);
+
+            data.forEach((value, index) => {
+                const barHeight = (value / maxValue) * (canvas.height - 60);
+                const x = index * barWidth + 20;
+                const y = canvas.height - barHeight - 30;
+
+                // Bar
+                const gradient = ctx.createLinearGradient(0, y, 0, canvas.height - 30);
+                gradient.addColorStop(0, '#6366f1');
+                gradient.addColorStop(1, '#4f46e5');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, y, barWidth - 40, barHeight);
+
+                // Label
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(days[index], x + (barWidth - 40) / 2, canvas.height - 10);
+
+                // Value
+                if (value > 0) {
+                    ctx.fillStyle = '#f1f5f9';
+                    ctx.font = 'bold 14px Inter';
+                    ctx.fillText(value.toFixed(1) + 'h', x + (barWidth - 40) / 2, y - 10);
+                }
+            });
+        }
+
+        // ==================== ANALYTICS ====================
+        function updateAnalytics() {
+            // Total study hours
+            const totalHours = Math.floor(AppData.user.totalStudyMinutes / 60);
+            document.getElementById('totalStudyHours').textContent = `${totalHours}h`;
+
+            // Best study time
+            const hourCounts = new Array(24).fill(0);
+            AppData.studySessions.forEach(s => {
+                const hour = new Date(s.timestamp).getHours();
+                hourCounts[hour] += s.duration;
+            });
+            const bestHour = hourCounts.indexOf(Math.max(...hourCounts));
+            if (bestHour >= 0) {
+                const period = bestHour >= 12 ? 'PM' : 'AM';
+                const hour12 = bestHour % 12 || 12;
+                document.getElementById('bestStudyTime').textContent = `${hour12} ${period}`;
+            }
+
+            // Average focus
+            const avgMinutes = AppData.studySessions.length > 0
+                ? Math.round(AppData.studySessions.reduce((sum, s) => sum + s.duration, 0) / AppData.studySessions.length)
+                : 0;
+            document.getElementById('avgFocus').textContent = `${avgMinutes}m`;
+
+            // Consistency
+            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+            const studyDays = new Set(AppData.studySessions
+                .filter(s => new Date(s.date).getMonth() === new Date().getMonth())
+                .map(s => s.date)
+            ).size;
+            const consistency = Math.round((studyDays / daysInMonth) * 100);
+            document.getElementById('consistency').textContent = `${consistency}%`;
+
+            renderSubjectProgress();
+            renderMonthlyChart();
+        }
+
+        function renderSubjectProgress() {
+            const container = document.getElementById('subjectProgress');
+            container.innerHTML = '';
+
+            const subjectMinutes = {};
+            AppData.studySessions.forEach(s => {
+                if (s.subject) {
+                    subjectMinutes[s.subject] = (subjectMinutes[s.subject] || 0) + s.duration;
+                }
+            });
+
+            const total = Object.values(subjectMinutes).reduce((sum, m) => sum + m, 0);
+
+            Object.entries(subjectMinutes).forEach(([subjectId, minutes]) => {
+                const subject = AppData.subjects.find(s => s.id == subjectId);
+                if (!subject) return;
+
+                const percentage = total > 0 ? Math.round((minutes / total) * 100) : 0;
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+
+                const div = document.createElement('div');
+                div.style.marginBottom = '24px';
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="font-weight: 600;">${subject.name}</span>
+                        <span style="color: var(--text-secondary);">${hours}h ${mins}m (${percentage}%)</span>
+                    </div>
+                    <div class="progress-bar" style="height: 10px;">
+                        <div class="progress-fill" style="width: ${percentage}%; background: ${subject.color}"></div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            if (Object.keys(subjectMinutes).length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-text">No study data yet</div></div>';
+            }
+        }
+
+        function renderMonthlyChart() {
+            const canvas = document.getElementById('monthlyChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const data = new Array(30).fill(0);
+
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toDateString();
+                const dayMinutes = AppData.studySessions
+                    .filter(s => s.date === dateStr)
+                    .reduce((sum, s) => sum + s.duration, 0);
+                data[29 - i] = dayMinutes / 60;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const pointSpacing = canvas.width / 29;
+            const maxValue = Math.max(...data, 3);
+
+            // Gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height - 20);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 10);
+
+            data.forEach((value, index) => {
+                const x = index * pointSpacing;
+                const y = canvas.height - (value / maxValue) * (canvas.height - 20) - 10;
+                ctx.lineTo(x, y);
+            });
+
+            ctx.lineTo(canvas.width, canvas.height - 10);
+            ctx.closePath();
+            ctx.fill();
+
+            // Line
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            data.forEach((value, index) => {
+                const x = index * pointSpacing;
+                const y = canvas.height - (value / maxValue) * (canvas.height - 20) - 10;
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+        }
+
+        // ==================== ACHIEVEMENTS ====================
+        const achievementsList = [
+            { id: 'first_session', icon: '🎯', title: 'Getting Started', desc: 'Complete your first study session', xp: 10 },
+            { id: 'hour_study', icon: '⏰', title: 'Hour Power', desc: 'Study for 1 hour', xp: 25 },
+            { id: 'streak_3', icon: '🔥', title: 'On Fire', desc: 'Maintain a 3-day streak', xp: 50 },
+            { id: 'streak_7', icon: '⚡', title: 'Week Warrior', desc: 'Maintain a 7-day streak', xp: 100 },
+            { id: 'streak_14', icon: '💪', title: 'Unstoppable', desc: 'Maintain a 14-day streak', xp: 200 },
+            { id: 'tasks_10', icon: '✅', title: 'Task Master', desc: 'Complete 10 tasks', xp: 50 },
+            { id: 'tasks_50', icon: '🎖️', title: 'Task Crusher', desc: 'Complete 50 tasks', xp: 150 },
+            { id: 'level_5', icon: '🌟', title: 'Rising Star', desc: 'Reach level 5', xp: 100 },
+            { id: 'level_10', icon: '💎', title: 'Diamond Mind', desc: 'Reach level 10', xp: 250 },
+            { id: 'total_10h', icon: '📚', title: 'Dedicated', desc: 'Study for 10 total hours', xp: 75 },
+            { id: 'total_50h', icon: '🏆', title: 'Champion', desc: 'Study for 50 total hours', xp: 200 },
+            { id: 'total_100h', icon: '👑', title: 'Legend', desc: 'Study for 100 total hours', xp: 500 },
+            { id: 'early_bird', icon: '🌅', title: 'Early Bird', desc: 'Study before 8 AM', xp: 25 },
+            { id: 'night_owl', icon: '🦉', title: 'Night Owl', desc: 'Study after 10 PM', xp: 25 },
+            { id: 'speedster', icon: '⚡', title: 'Speedster', desc: 'Complete 5 tasks in one day', xp: 50 },
+            { id: 'notes_master', icon: '📝', title: 'Notes Master', desc: 'Create 20 notes', xp: 75 }
+        ];
+
+        function checkAchievements() {
+            const unlocked = [];
+
+            if (AppData.studySessions.length >= 1 && !hasAchievement('first_session')) {
+                unlocked.push('first_session');
+            }
+
+            const totalHours = AppData.user.totalStudyMinutes / 60;
+            if (totalHours >= 1 && !hasAchievement('hour_study')) unlocked.push('hour_study');
+            if (totalHours >= 10 && !hasAchievement('total_10h')) unlocked.push('total_10h');
+            if (totalHours >= 50 && !hasAchievement('total_50h')) unlocked.push('total_50h');
+            if (totalHours >= 100 && !hasAchievement('total_100h')) unlocked.push('total_100h');
+
+            if (AppData.user.streak >= 3 && !hasAchievement('streak_3')) unlocked.push('streak_3');
+            if (AppData.user.streak >= 7 && !hasAchievement('streak_7')) unlocked.push('streak_7');
+            if (AppData.user.streak >= 14 && !hasAchievement('streak_14')) unlocked.push('streak_14');
+
+            const completedTasks = AppData.tasks.filter(t => t.completed).length;
+            if (completedTasks >= 10 && !hasAchievement('tasks_10')) unlocked.push('tasks_10');
+            if (completedTasks >= 50 && !hasAchievement('tasks_50')) unlocked.push('tasks_50');
+
+            if (AppData.user.level >= 5 && !hasAchievement('level_5')) unlocked.push('level_5');
+            if (AppData.user.level >= 10 && !hasAchievement('level_10')) unlocked.push('level_10');
+
+            if (AppData.notes.length >= 20 && !hasAchievement('notes_master')) unlocked.push('notes_master');
+
+            unlocked.forEach(id => {
+                const achievement = achievementsList.find(a => a.id === id);
+                AppData.achievements.push({ id, unlockedAt: Date.now() });
+                addXP(achievement.xp);
+                showNotification('Achievement Unlocked! 🏆', achievement.title);
+            });
+
+            if (unlocked.length > 0) {
+                saveData();
+            }
+        }
+
+        function hasAchievement(id) {
+            return AppData.achievements.some(a => a.id === id);
+        }
+
+        function updateAchievements() {
+            const container = document.getElementById('achievementsList');
+            container.innerHTML = '';
+
+            achievementsList.forEach(achievement => {
+                const unlocked = hasAchievement(achievement.id);
+                const div = document.createElement('div');
+                div.className = `achievement-card ${unlocked ? 'unlocked' : 'locked'}`;
+                div.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-desc">${achievement.desc}</div>
+                    <div style="margin-top: 12px; color: var(--primary-light); font-weight: 700; font-size: 12px;">
+                        +${achievement.xp} XP
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            // Update progress
+            document.getElementById('achievementLevel').textContent = AppData.user.level;
+            document.getElementById('achievementXP').textContent = AppData.user.xp;
+
+            const nextLevel = AppData.user.level * 100;
+            document.getElementById('achievementNextLevel').textContent = nextLevel;
+
+            const progress = Math.min(100, (AppData.user.xp / nextLevel) * 100);
+            document.getElementById('xpProgress').style.width = `${progress}%`;
+
+            const unlockedCount = AppData.achievements.length;
+            const totalCount = achievementsList.length;
+            document.getElementById('unlockedCount').textContent = unlockedCount;
+            document.getElementById('totalCount').textContent = totalCount;
+        }
+
+        // ==================== XP SYSTEM ====================
+        function addXP(amount) {
+            AppData.user.xp += amount;
+
+            const requiredXP = AppData.user.level * 100;
+            if (AppData.user.xp >= requiredXP) {
+                AppData.user.level++;
+                AppData.user.xp -= requiredXP;
+                showNotification('Level Up! 🎉', `You reached level ${AppData.user.level}!`);
+            }
+
+            saveData();
+            updateDashboard();
+            checkAchievements();
+        }
+
+        // ==================== NOTIFICATIONS ====================
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // ==================== QUOTES ====================
+        const quotes = [
+            "The secret of getting ahead is getting started.",
+            "Success is the sum of small efforts repeated day in and day out.",
+            "Don't watch the clock; do what it does. Keep going.",
+            "The expert in anything was once a beginner.",
+            "Your limitation—it's only your imagination.",
+            "Push yourself, because no one else is going to do it for you.",
+            "Great things never come from comfort zones.",
+            "Dream it. Wish it. Do it.",
+            "Success doesn't just find you. You have to go out and get it.",
+            "The harder you work for something, the greater you'll feel when you achieve it.",
+            "Education is the passport to the future.",
+            "The beautiful thing about learning is that no one can take it away from you.",
+            "Study while others are sleeping; work while others are loafing.",
+            "Success is what comes after you stop making excuses.",
+            "The only way to do great work is to love what you do."
+        ];
+
+        function updateQuote() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('focusQuote').textContent = `"${quote}"`;
+        }
+
+        // ==================== AI CHAT SYSTEM ====================
+        function initAIChat() {
+            // Create initial chat if none exists
+            if (AppData.aiChats.length === 0) {
+                createNewChat();
+            } else {
+                // Load the most recent chat
+                AppData.currentChatId = AppData.aiChats[0].id;
+                renderChatHistory();
+                renderCurrentChat();
+            }
+
+            // Event listeners
+            document.getElementById('aiSendBtn').addEventListener('click', sendAIMessage);
+            document.getElementById('aiChatInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendAIMessage();
+                }
+            });
+
+            document.getElementById('newChatBtn').addEventListener('click', createNewChat);
+
+            // Quick action buttons
+            document.querySelectorAll('.ai-quick-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('aiChatInput').value = btn.dataset.quick;
+                    sendAIMessage();
+                });
+            });
+
+            // Feature cards
+            document.querySelectorAll('.ai-feature-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const action = card.dataset.action;
+                    handleAIFeature(action);
+                });
+            });
+
+            // Auto-resize textarea
+            const textarea = document.getElementById('aiChatInput');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+            });
+        }
+
+        function createNewChat() {
+            const chat = {
+                id: Date.now(),
+                title: 'New Conversation',
+                messages: [],
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+
+            AppData.aiChats.unshift(chat);
+            AppData.currentChatId = chat.id;
+            saveData();
+            renderChatHistory();
+            renderCurrentChat();
+        }
+
+        function renderChatHistory() {
+            const container = document.getElementById('chatHistoryList');
+            container.innerHTML = '';
+
+            AppData.aiChats.forEach(chat => {
+                const div = document.createElement('div');
+                div.className = `ai-chat-history-item ${chat.id === AppData.currentChatId ? 'active' : ''}`;
+                div.innerHTML = `
+                    <div class="ai-chat-history-title">${chat.title}</div>
+                    <div class="ai-chat-history-date">${new Date(chat.createdAt).toLocaleDateString()}</div>
+                `;
+                div.addEventListener('click', () => {
+                    AppData.currentChatId = chat.id;
+                    saveData();
+                    renderChatHistory();
+                    renderCurrentChat();
+                });
+                container.appendChild(div);
+            });
+        }
+
+        function renderCurrentChat() {
+            const container = document.getElementById('aiChatMessages');
+            const currentChat = AppData.aiChats.find(c => c.id === AppData.currentChatId);
+            
+            if (!currentChat) return;
+
+            // Clear except welcome message
+            const welcomeMessage = container.querySelector('.ai-message.assistant');
+            container.innerHTML = '';
+            if (currentChat.messages.length === 0 && welcomeMessage) {
+                container.appendChild(welcomeMessage);
+            }
+
+            // Render messages
+            currentChat.messages.forEach(msg => {
+                addMessageToUI(msg.role, msg.content, msg.timestamp);
+            });
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addMessageToUI(role, content, timestamp = Date.now()) {
+            const container = document.getElementById('aiChatMessages');
+            
+            const div = document.createElement('div');
+            div.className = `ai-message ${role}`;
+            
+            const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            div.innerHTML = `
+                <div class="ai-message-avatar ${role}">
+                    ${role === 'user' ? '👤' : '🤖'}
+                </div>
+                <div class="ai-message-content">
+                    <div class="ai-message-header">
+                        <span class="ai-message-name">${role === 'user' ? 'You' : 'AI Assistant'}</span>
+                        <span class="ai-message-time">${time}</span>
+                    </div>
+                    <div class="ai-message-text">${content}</div>
+                </div>
+            `;
+
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const container = document.getElementById('aiChatMessages');
+            const div = document.createElement('div');
+            div.className = 'ai-message assistant';
+            div.id = 'typingIndicator';
+            div.innerHTML = `
+                <div class="ai-message-avatar assistant">🤖</div>
+                <div class="ai-message-content">
+                    <div class="ai-typing-indicator">
+                        <div class="ai-typing-dot"></div>
+                        <div class="ai-typing-dot"></div>
+                        <div class="ai-typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiChatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message
+            const currentChat = AppData.aiChats.find(c => c.id === AppData.currentChatId);
+            if (!currentChat) return;
+
+            currentChat.messages.push({
+                role: 'user',
+                content: message,
+                timestamp: Date.now()
+            });
+
+            // Update chat title if first message
+            if (currentChat.messages.length === 1) {
+                currentChat.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
+            }
+
+            currentChat.updatedAt = Date.now();
+            saveData();
+
+            addMessageToUI('user', message);
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate AI response
+            setTimeout(() => {
+                hideTypingIndicator();
+                const aiResponse = generateAIResponse(message);
+                
+                currentChat.messages.push({
+                    role: 'assistant',
+                    content: aiResponse,
+                    timestamp: Date.now()
+                });
+                currentChat.updatedAt = Date.now();
+                saveData();
+
+                addMessageToUI('assistant', aiResponse);
+                renderChatHistory();
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function generateAIResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+
+            // Study plan
+            if (msg.includes('study plan') || msg.includes('what should i study')) {
+                return generateStudyPlan();
+            }
+
+            // Motivation
+            if (msg.includes('motivat') || msg.includes('inspire') || msg.includes('give up')) {
+                return generateMotivation();
+            }
+
+            // Progress analysis
+            if (msg.includes('progress') || msg.includes('analyz')) {
+                return analyzeProgress();
+            }
+
+            // Focus tips
+            if (msg.includes('focus') || msg.includes('concentration') || msg.includes('distract')) {
+                return `<p style="margin-bottom: 12px;"><strong>Here are some proven focus strategies:</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>Pomodoro Technique:</strong> Study for 25 minutes, then take a 5-minute break</li>
+                    <li><strong>Remove distractions:</strong> Put your phone in another room, use website blockers</li>
+                    <li><strong>Single-tasking:</strong> Focus on one subject at a time</li>
+                    <li><strong>Active learning:</strong> Take notes, summarize in your own words</li>
+                    <li><strong>Study environment:</strong> Find a quiet, dedicated study space</li>
+                    <li><strong>Sleep well:</strong> 7-8 hours of sleep improves focus significantly</li>
+                </ul>
+                <p style="margin-top: 12px;">Try using the Focus Mode in the timer section!</p>`;
+            }
+
+            // Weak areas
+            if (msg.includes('weak') || msg.includes('improve') || msg.includes('struggle')) {
+                return identifyWeakAreas();
+            }
+
+            // Exam prep
+            if (msg.includes('exam') || msg.includes('test') || msg.includes('preparation')) {
+                return `<p style="margin-bottom: 12px;"><strong>Exam Preparation Strategy:</strong></p>
+                <ol style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>3 weeks before:</strong> Start reviewing all topics, create summary notes</li>
+                    <li><strong>2 weeks before:</strong> Practice past papers, identify weak areas</li>
+                    <li><strong>1 week before:</strong> Deep dive into weak topics, create flashcards</li>
+                    <li><strong>3 days before:</strong> Final review, focus on key concepts</li>
+                    <li><strong>1 day before:</strong> Light revision only, rest well</li>
+                </ol>
+                <p style="margin-top: 12px;">Based on your upcoming events, I can create a detailed exam prep timeline for you!</p>`;
+            }
+
+            // Time management
+            if (msg.includes('time') || msg.includes('schedule') || msg.includes('manage')) {
+                return `<p style="margin-bottom: 12px;"><strong>Effective Time Management Tips:</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Use the Eisenhower Matrix: Urgent/Important prioritization</li>
+                    <li>Time block your day: Assign specific subjects to specific hours</li>
+                    <li>Study during your peak hours (most people: morning or late evening)</li>
+                    <li>Use the 2-minute rule: If it takes less than 2 minutes, do it now</li>
+                    <li>Plan tomorrow tonight: Write your study plan before bed</li>
+                    <li>Track your time: Use the timer to see where your hours go</li>
+                </ul>
+                <p style="margin-top: 12px;">I noticed you study best around ${getBestStudyTime()}. Try scheduling difficult subjects during that time!</p>`;
+            }
+
+            // Notes and flashcards
+            if (msg.includes('notes') || msg.includes('flashcard')) {
+                return `<p style="margin-bottom: 12px;"><strong>Effective Note-Taking & Flashcard Tips:</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>Cornell Method:</strong> Divide page into cues, notes, and summary sections</li>
+                    <li><strong>Mind Mapping:</strong> Visual connections between concepts</li>
+                    <li><strong>Active Recall:</strong> Write what you remember, then check</li>
+                    <li><strong>Flashcards:</strong> Question on front, detailed answer on back</li>
+                    <li><strong>Spaced Repetition:</strong> Review flashcards at increasing intervals</li>
+                    <li><strong>Color Coding:</strong> Use different colors for different topics</li>
+                </ul>
+                <p style="margin-top: 12px;">Try using the Notes and Flashcards sections in StudyFlow to organize your learning!</p>`;
+            }
+
+            // Memory techniques
+            if (msg.includes('memory') || msg.includes('remember') || msg.includes('forget')) {
+                return `<p style="margin-bottom: 12px;"><strong>Memory Enhancement Techniques:</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>Mnemonics:</strong> Create acronyms or phrases (e.g., PEMDAS for math)</li>
+                    <li><strong>Chunking:</strong> Break information into smaller groups</li>
+                    <li><strong>Method of Loci:</strong> Associate info with physical locations</li>
+                    <li><strong>Teach Others:</strong> Explain concepts as if teaching someone</li>
+                    <li><strong>Sleep Learning:</strong> Review before bed for better retention</li>
+                    <li><strong>Multi-Sensory:</strong> Use visual, auditory, and kinesthetic learning</li>
+                </ul>
+                <p style="margin-top: 12px;">The revision system uses spaced repetition - proven to improve long-term memory!</p>`;
+            }
+
+            // Revision
+            if (msg.includes('revision') || msg.includes('review')) {
+                return generateRevisionSchedule();
+            }
+
+            // Streak
+            if (msg.includes('streak')) {
+                return `<p style="margin-bottom: 12px;">Your current streak is <strong>${AppData.user.streak} days</strong>! 🔥</p>
+                <p style="margin-bottom: 12px;">Keep it going! Here's why streaks matter:</p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>Builds consistent study habits</li>
+                    <li>Creates momentum and motivation</li>
+                    <li>Improves long-term retention</li>
+                    <li>Develops self-discipline</li>
+                </ul>
+                <p style="margin-top: 12px;">Even 15 minutes a day counts. The key is consistency!</p>`;
+            }
+
+            // Default helpful response
+            return `<p style="margin-bottom: 12px;">I'm here to help you study better! Here are some things I can assist with:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li>📅 Creating personalized study plans</li>
+                <li>🎯 Analyzing your study patterns and weak areas</li>
+                <li>🔄 Generating revision schedules</li>
+                <li>💪 Providing motivation and study tips</li>
+                <li>📚 Helping with time management</li>
+                <li>🧠 Memory and focus techniques</li>
+                <li>✅ Task prioritization strategies</li>
+            </ul>
+            <p style="margin-top: 12px;">Try asking: "What should I study today?" or "How can I improve my focus?"</p>`;
+        }
+
+        function generateStudyPlan() {
+            const subjects = AppData.subjects.slice(0, 4);
+            const today = new Date();
+            const hours = today.getHours();
+
+            if (subjects.length === 0) {
+                return `<p>I'd love to create a study plan for you! First, add some subjects in the Tasks section, then I can generate a personalized schedule based on your study patterns.</p>`;
+            }
+
+            let plan = `<p style="margin-bottom: 16px;"><strong>📅 Your AI-Generated Study Plan for Today:</strong></p><ol style="margin-left: 20px; line-height: 2;">`;
+
+            const times = [
+                { start: '9:00 AM', end: '10:30 AM' },
+                { start: '11:00 AM', end: '12:30 PM' },
+                { start: '2:00 PM', end: '3:30 PM' },
+                { start: '4:00 PM', end: '5:00 PM' }
+            ];
+
+            subjects.forEach((subject, index) => {
+                const time = times[index] || times[times.length - 1];
+                const tasks = AppData.tasks.filter(t => t.subject === subject.id && !t.completed);
+                const taskText = tasks.length > 0 ? tasks[0].title : `Review ${subject.name} concepts`;
+                
+                plan += `<li><strong>${time.start} - ${time.end}:</strong> ${subject.name} - ${taskText}</li>`;
+            });
+
+            plan += `</ol><p style="margin-top: 16px;">💡 <strong>Pro Tips:</strong></p><ul style="margin-left: 20px; line-height: 1.8;"><li>Take 10-15 minute breaks between sessions</li><li>Start with your most challenging subject</li><li>Use the Pomodoro timer for better focus</li></ul>`;
+
+            return plan;
+        }
+
+        function generateMotivation() {
+            const motivationalMessages = [
+                `<p style="margin-bottom: 12px;"><strong>You're doing amazing! 🌟</strong></p>
+                <p>Every study session is a step toward your goals. You've already completed ${AppData.user.totalStudyMinutes > 0 ? Math.floor(AppData.user.totalStudyMinutes / 60) : 0} hours of focused study - that's dedication!</p>
+                <p style="margin-top: 12px;">Remember: Success is built one day at a time. Keep showing up, keep learning, and trust the process. You've got this! 💪</p>`,
+                
+                `<p style="margin-bottom: 12px;"><strong>Keep pushing forward! 🚀</strong></p>
+                <p>The fact that you're here, actively working on your education, puts you ahead of most people. Your ${AppData.user.streak}-day streak shows commitment!</p>
+                <p style="margin-top: 12px;">"Success is not final, failure is not fatal: it is the courage to continue that counts." - Winston Churchill</p>`,
+                
+                `<p style="margin-bottom: 12px;"><strong>Believe in yourself! ⭐</strong></p>
+                <p>You're at Level ${AppData.user.level} - you've proven you can do this! Every challenge you overcome makes you stronger and smarter.</p>
+                <p style="margin-top: 12px;">Remember why you started. Your future self will thank you for the work you're putting in today! 🎯</p>`
+            ];
+
+            return motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+        }
+
+        function analyzeProgress() {
+            const totalHours = Math.floor(AppData.user.totalStudyMinutes / 60);
+            const totalMinutes = AppData.user.totalStudyMinutes % 60;
+            const completedTasks = AppData.tasks.filter(t => t.completed).length;
+            const totalTasks = AppData.tasks.length;
+            const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            // Get this week's study time
+            const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            const weekSessions = AppData.studySessions.filter(s => new Date(s.timestamp).getTime() >= weekAgo);
+            const weekMinutes = weekSessions.reduce((sum, s) => sum + s.duration, 0);
+            const weekHours = Math.floor(weekMinutes / 60);
+
+            return `<p style="margin-bottom: 16px;"><strong>📊 Your Progress Analysis:</strong></p>
+            <div style="background: rgba(99, 102, 241, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <p style="margin-bottom: 8px;"><strong>Overall Stats:</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>📚 Total Study Time: ${totalHours}h ${totalMinutes}m</li>
+                    <li>🔥 Current Streak: ${AppData.user.streak} days</li>
+                    <li>✅ Task Completion Rate: ${completionRate}%</li>
+                    <li>⭐ Level: ${AppData.user.level} (${AppData.user.xp} XP)</li>
+                    <li>📅 This Week: ${weekHours} hours studied</li>
+                </ul>
+            </div>
+            <p style="margin-bottom: 12px;"><strong>Insights:</strong></p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                ${totalHours >= 10 ? '<li>✨ Excellent! You\'re building strong study habits</li>' : '<li>💪 Keep building momentum - consistency is key!</li>'}
+                ${AppData.user.streak >= 7 ? '<li>🔥 Amazing streak! You\'re on fire!</li>' : '<li>🎯 Focus on maintaining daily study sessions</li>'}
+                ${completionRate >= 70 ? '<li>🎖️ Great task completion rate!</li>' : '<li>📝 Try breaking tasks into smaller chunks for better completion</li>'}
+            </ul>
+            <p style="margin-top: 12px;">Keep up the excellent work! Your dedication is paying off! 🌟</p>`;
+        }
+
+        function identifyWeakAreas() {
+            const subjectMinutes = {};
+            AppData.studySessions.forEach(s => {
+                if (s.subject) {
+                    subjectMinutes[s.subject] = (subjectMinutes[s.subject] || 0) + s.duration;
+                }
+            });
+
+            if (Object.keys(subjectMinutes).length === 0) {
+                return `<p>Start logging your study sessions with subjects, and I'll help identify areas that need more attention!</p>`;
+            }
+
+            const sortedSubjects = Object.entries(subjectMinutes)
+                .sort((a, b) => a[1] - b[1])
+                .slice(0, 3);
+
+            let response = `<p style="margin-bottom: 16px;"><strong>🎯 Weak Areas Analysis:</strong></p>
+            <p style="margin-bottom: 12px;">Based on your study patterns, these subjects need more attention:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">`;
+
+            sortedSubjects.forEach(([subjectId, minutes]) => {
+                const subject = AppData.subjects.find(s => s.id == subjectId);
+                if (subject) {
+                    const hours = Math.floor(minutes / 60);
+                    response += `<li><strong>${subject.name}:</strong> Only ${hours}h ${minutes % 60}m studied</li>`;
+                }
+            });
+
+            response += `</ul><p style="margin-top: 12px;"><strong>Recommendation:</strong> Dedicate 30-45 minutes daily to your weakest subject for the next week!</p>`;
+
+            return response;
+        }
+
+        function generateRevisionSchedule() {
+            return `<p style="margin-bottom: 16px;"><strong>🔄 AI-Powered Revision Schedule:</strong></p>
+            <p style="margin-bottom: 12px;">Based on spaced repetition research, here's your optimal revision timeline:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>First review:</strong> 1 day after learning</li>
+                <li><strong>Second review:</strong> 3 days after learning</li>
+                <li><strong>Third review:</strong> 7 days after learning</li>
+                <li><strong>Fourth review:</strong> 14 days after learning</li>
+                <li><strong>Fifth review:</strong> 30 days after learning</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Pro Tip:</strong> Use the Revision section to track your review schedule automatically!</p>`;
+        }
+
+        function getBestStudyTime() {
+            const hourCounts = new Array(24).fill(0);
+            AppData.studySessions.forEach(s => {
+                const hour = new Date(s.timestamp).getHours();
+                hourCounts[hour] += s.duration;
+            });
+            const bestHour = hourCounts.indexOf(Math.max(...hourCounts));
+            
+            if (bestHour >= 0 && hourCounts[bestHour] > 0) {
+                const period = bestHour >= 12 ? 'PM' : 'AM';
+                const hour12 = bestHour % 12 || 12;
+                return `${hour12} ${period}`;
+            }
+            return '9-11 AM';
+        }
+
+        function handleAIFeature(action) {
+            const input = document.getElementById('aiChatInput');
+            
+            const actionMessages = {
+                'study-plan': 'Create a detailed study plan for today',
+                'weak-areas': 'Identify my weak areas and suggest improvements',
+                'exam-prep': 'Help me prepare for my upcoming exams',
+                'motivate': 'I need some motivation to keep studying',
+                'revision': 'Generate a revision schedule using spaced repetition',
+                'summarize': 'Give me tips on effective note-taking and summarization'
+            };
+
+            input.value = actionMessages[action] || 'Help me study better';
+            sendAIMessage();
+        }
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            updateTimerDisplay();
+            updateDashboard();
+            renderSubjects();
+            updateSubjectSelects();
+            renderCalendar();
+            updateQuote();
+            renderNotes();
+            renderFlashcards();
+            initAIChat();
+
+            // Auto-save
+            setInterval(saveData, 30000);
+
+            // Check achievements
+            setInterval(checkAchievements, 10000);
+
+            // Update quote
+            setInterval(updateQuote, 300000);
+
+            // Update timer display
+            setInterval(updateTodayTime, 60000);
+
+            // Show weekly replay on Sundays
+            const today = new Date();
+            if (today.getDay() === 0) { // Sunday
+                const replayEl = document.getElementById('weeklyReplay');
+                if (replayEl) {
+                    replayEl.style.display = 'block';
+                    
+                    // Calculate replay stats
+                    const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                    const weekSessions = AppData.studySessions.filter(s => new Date(s.timestamp).getTime() >= weekAgo);
+                    const weekMinutes = weekSessions.reduce((sum, s) => sum + s.duration, 0);
+                    const weekHours = Math.floor(weekMinutes / 60);
+                    
+                    document.getElementById('replayHours').textContent = `${weekHours}h`;
+                    
+                    // Best day
+                    const dayMinutes = {};
+                    weekSessions.forEach(s => {
+                        dayMinutes[s.date] = (dayMinutes[s.date] || 0) + s.duration;
+                    });
+                    const bestDay = Object.keys(dayMinutes).reduce((a, b) => 
+                        dayMinutes[a] > dayMinutes[b] ? a : b, '-'
+                    );
+                    if (bestDay !== '-') {
+                        const date = new Date(bestDay);
+                        document.getElementById('replayBestDay').textContent = 
+                            date.toLocaleDateString('en-US', { weekday: 'short' });
+                    }
+                    
+                    // Achievements this week
+                    const weekAchievements = AppData.achievements.filter(a => 
+                        a.unlockedAt >= weekAgo
+                    ).length;
+                    document.getElementById('replayAchievements').textContent = weekAchievements;
+                    
+                    // Growth
+                    const prevWeekStart = weekAgo - (7 * 24 * 60 * 60 * 1000);
+                    const prevWeekSessions = AppData.studySessions.filter(s => {
+                        const timestamp = new Date(s.timestamp).getTime();
+                        return timestamp >= prevWeekStart && timestamp < weekAgo;
+                    });
+                    const prevWeekMinutes = prevWeekSessions.reduce((sum, s) => sum + s.duration, 0);
+                    
+                    const growth = prevWeekMinutes > 0 
+                        ? Math.round(((weekMinutes - prevWeekMinutes) / prevWeekMinutes) * 100)
+                        : 0;
+                    document.getElementById('replayGrowth').textContent = `${growth > 0 ? '+' : ''}${growth}%`;
+                }
+            }
+
+            console.log('✨ StudyFlow initialized successfully!');
+        }
+
+        init();
+    </script>
+</body>
+</html>
