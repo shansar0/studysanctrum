@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyFlow - Custom Minimal Focus Dashboard</title>
+    <title>StudyFlow - AI-Powered Study Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -29,6 +29,8 @@
             --text-muted: #64748b;
             --border: #334155;
             --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
@@ -42,6 +44,26 @@
             line-height: 1.6;
         }
 
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Sidebar Navigation */
         .sidebar {
             position: fixed;
             left: 0;
@@ -52,6 +74,7 @@
             border-right: 1px solid var(--border);
             padding: 24px 0;
             z-index: 100;
+            overflow-y: auto;
         }
 
         .logo {
@@ -105,6 +128,35 @@
             text-align: center;
         }
 
+        .user-profile {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .user-stat {
+            text-align: center;
+        }
+
+        .user-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .user-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Main Content */
         .main-content {
             margin-left: 260px;
             padding: 32px;
@@ -125,6 +177,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Dashboard */
         .page-header {
             margin-bottom: 32px;
         }
@@ -140,7 +193,6 @@
             font-size: 16px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -153,7 +205,9 @@
             padding: 24px;
             border-radius: 16px;
             border: 1px solid var(--border);
+            transition: all 0.3s;
             position: relative;
+            overflow: hidden;
         }
 
         .stat-card::before {
@@ -164,6 +218,12 @@
             right: 0;
             height: 3px;
             background: var(--gradient-1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
         }
 
         .stat-header {
@@ -178,13 +238,26 @@
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            opacity: 0.6;
         }
 
         .stat-value {
             font-size: 36px;
             font-weight: 700;
+            margin-bottom: 8px;
         }
 
+        .stat-change {
+            font-size: 13px;
+            color: var(--success);
+        }
+
+        /* Cards */
         .card {
             background: var(--bg-secondary);
             border-radius: 16px;
@@ -205,13 +278,74 @@
             font-weight: 700;
         }
 
-        /* Timer UI Elements */
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        /* Timer */
         .timer-container {
             background: var(--gradient-1);
             border-radius: 24px;
-            padding: 48px 32px;
+            padding: 64px 32px;
             text-align: center;
             margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         }
 
         .timer-mode-tabs {
@@ -219,9 +353,7 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             padding: 4px;
-            margin-bottom: 24px;
-            pointer-events: none;
-            opacity: 0.6;
+            margin-bottom: 32px;
         }
 
         .timer-mode-tab {
@@ -230,7 +362,9 @@
             background: transparent;
             color: rgba(255, 255, 255, 0.7);
             border-radius: 8px;
+            cursor: pointer;
             font-weight: 600;
+            transition: all 0.2s;
         }
 
         .timer-mode-tab.active {
@@ -239,31 +373,264 @@
         }
 
         .timer-display {
-            font-size: 80px;
+            font-size: 96px;
             font-weight: 800;
             color: white;
-            margin: 20px 0;
+            margin: 32px 0;
+            letter-spacing: -2px;
             text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .timer-controls-locked {
-            pointer-events: none;
-            opacity: 0.5;
-            margin-bottom: 16px;
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
         .timer-btn {
-            padding: 14px 36px;
-            font-size: 14px;
+            padding: 16px 40px;
+            font-size: 16px;
             font-weight: 700;
             border: none;
             border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin: 0 6px;
         }
 
-        .timer-btn-disabled { background: rgba(255, 255, 255, 0.1); color: rgba(255,255,255,0.4); border: 1px dashed rgba(255,255,255,0.2); }
+        .timer-btn-start {
+            background: white;
+            color: var(--primary);
+        }
+
+        .timer-btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+        }
+
+        .timer-btn-pause,
+        .timer-btn-reset {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .timer-btn-pause:hover,
+        .timer-btn-reset:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .timer-info {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 24px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .timer-info-item {
+            text-align: center;
+        }
+
+        .timer-info-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .timer-info-label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* Tasks */
+        .task-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+            cursor: move;
+        }
+
+        .task-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: 700;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .task-priority {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .task-priority.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .task-priority.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .task-priority.low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+        }
 
         .form-group {
             margin-bottom: 20px;
@@ -274,9 +641,12 @@
             margin-bottom: 8px;
             font-weight: 600;
             font-size: 14px;
+            color: var(--text-primary);
         }
 
-        .form-input {
+        .form-input,
+        .form-select,
+        .form-textarea {
             width: 100%;
             padding: 12px 16px;
             background: var(--bg-tertiary);
@@ -285,30 +655,44 @@
             color: var(--text-primary);
             font-size: 14px;
             font-family: inherit;
+            transition: all 0.2s;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-secondary);
         }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
         }
 
-        /* Calendar Layout */
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* Calendar */
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
+        }
+
+        .calendar-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 8px;
         }
 
         .calendar-grid {
@@ -333,7 +717,15 @@
             justify-content: center;
             background: var(--bg-tertiary);
             border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
             font-weight: 600;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+            color: white;
         }
 
         .calendar-day.today {
@@ -341,14 +733,423 @@
             color: white;
         }
 
-        /* AI Interface Setup */
-        .ai-chat-container {
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 24px 0;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .achievement-card {
+            background: var(--bg-tertiary);
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .achievement-card.unlocked {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.4;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .achievement-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .achievement-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Notes Editor */
+        .notes-editor {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .notes-toolbar {
             display: flex;
+            gap: 8px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .notes-toolbar button {
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notes-toolbar button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .notes-content {
+            min-height: 300px;
+            outline: none;
+        }
+
+        /* Focus Mode */
+        .focus-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 999;
+            display: none;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .focus-mode.active {
+            display: flex;
+        }
+
+        .focus-exit {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+        }
+
+        .focus-timer {
+            font-size: 120px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 40px 0;
+        }
+
+        .focus-quote {
+            font-size: 24px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 48px;
+        }
+
+        .focus-controls {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--bg-secondary);
+            padding: 20px 24px;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+            box-shadow: var(--shadow-xl);
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(500px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* AI Features */
+        .ai-suggestion {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .ai-content {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Study Replay */
+        .replay-card {
+            background: var(--gradient-1);
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+        }
+
+        .replay-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .replay-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .replay-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .replay-stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .replay-stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.mobile-open {
+                width: 260px;
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .timer-display {
+                font-size: 64px;
+            }
+
+            .focus-timer {
+                font-size: 80px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Flashcard */
+        .flashcard {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 40px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+
+        .flashcard.flipped {
+            background: var(--primary);
+        }
+
+        .flashcard-content {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 24px;
+        }
+
+        /* AI Chat Interface */
+        .ai-chat-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+
+        .ai-chat-sidebar {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .ai-chat-history-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .ai-chat-history-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .ai-chat-history-item.active {
+            background: var(--bg-tertiary);
+            border-left-color: var(--primary);
+        }
+
+        .ai-chat-history-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .ai-chat-history-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .ai-chat-main {
             background: var(--bg-secondary);
             border-radius: 16px;
             border: 1px solid var(--border);
-            height: calc(100vh - 220px);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
@@ -361,32 +1162,113 @@
             gap: 16px;
         }
 
-        .message {
+        .ai-message {
             display: flex;
-            flex-direction: column;
+            gap: 12px;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .ai-message-avatar.user {
+            background: var(--primary);
+        }
+
+        .ai-message-avatar.assistant {
+            background: var(--gradient-1);
+        }
+
+        .ai-message-content {
+            flex: 1;
             max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 12px;
+        }
+
+        .ai-message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .ai-message-name {
+            font-weight: 700;
             font-size: 14px;
         }
 
-        .message.user {
-            background: var(--primary);
-            align-self: flex-end;
-            color: white;
+        .ai-message-time {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
-        .message.assistant {
+        .ai-message-text {
             background: var(--bg-tertiary);
-            align-self: flex-start;
-            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .ai-message.user .ai-message-text {
+            background: var(--primary);
+        }
+
+        .ai-message.assistant .ai-message-text {
+            background: var(--bg-tertiary);
         }
 
         .ai-chat-input-container {
             padding: 20px;
             border-top: 1px solid var(--border);
+        }
+
+        .ai-chat-quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ai-quick-btn {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-quick-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .ai-chat-input-wrapper {
             display: flex;
             gap: 12px;
+            align-items: flex-end;
         }
 
         .ai-chat-input {
@@ -398,70 +1280,129 @@
             color: var(--text-primary);
             font-size: 14px;
             resize: none;
+            max-height: 150px;
             font-family: inherit;
         }
 
+        .ai-chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
         .ai-send-btn {
+            width: 44px;
+            height: 44px;
             background: var(--primary);
             border: none;
             border-radius: 10px;
             color: white;
-            padding: 0 20px;
+            font-size: 20px;
             cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Focus Mode Overrides Everything */
-        .focus-mode {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
+            transition: all 0.2s;
+            display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .focus-mode.active {
+        .ai-send-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .ai-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-typing-indicator {
             display: flex;
-        }
-
-        .focus-timer {
-            font-size: 120px;
-            font-weight: 800;
-            color: white;
-            margin: 40px 0;
-        }
-
-        .focus-controls {
-            display: flex;
-            gap: 16px;
-        }
-
-        .focus-btn_action {
-            padding: 16px 40px;
-            font-size: 16px;
-            font-weight: 700;
-            border: none;
+            gap: 4px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
             border-radius: 12px;
-            cursor: pointer;
-            text-transform: uppercase;
+            width: fit-content;
         }
-        .btn-start { background: var(--success); color: white; }
-        .btn-pause { background: var(--accent); color: white; }
-        .btn-exit { background: var(--error); color: white; }
+
+        .ai-typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .ai-typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .ai-typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .ai-feature-card {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .ai-feature-card:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .ai-feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .ai-feature-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .ai-feature-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Chat responsive */
+        @media (max-width: 768px) {
+            .ai-chat-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .ai-chat-sidebar {
+                display: none;
+            }
+
+            .ai-message-content {
+                max-width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="logo">
             <h1>⚡ StudyFlow</h1>
         </div>
+        
         <ul class="nav-menu">
             <li class="nav-item">
                 <a class="nav-link active" data-page="dashboard">
@@ -476,9 +1417,45 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-page="tasks">
+                    <span class="nav-icon">✓</span>
+                    <span>Tasks & Goals</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-page="calendar">
                     <span class="nav-icon">📅</span>
                     <span>Calendar</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="notes">
+                    <span class="nav-icon">📝</span>
+                    <span>Notes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="flashcards">
+                    <span class="nav-icon">🎴</span>
+                    <span>Flashcards</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="revision">
+                    <span class="nav-icon">🔄</span>
+                    <span>Revision</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="analytics">
+                    <span class="nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-page="achievements">
+                    <span class="nav-icon">🏆</span>
+                    <span>Achievements</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -488,23 +1465,73 @@
                 </a>
             </li>
         </ul>
+
+        <div class="user-profile">
+            <div class="user-stats">
+                <div class="user-stat">
+                    <div class="user-stat-value" id="sidebarLevel">1</div>
+                    <div class="user-stat-label">Level</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="sidebarStreak">0🔥</div>
+                    <div class="user-stat-label">Streak</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="sidebarXP">0</div>
+                    <div class="user-stat-label">XP</div>
+                </div>
+            </div>
+        </div>
     </aside>
 
     <main class="main-content">
-        
         <div class="page active" id="dashboard">
             <div class="page-header">
-                <h1 class="page-title">Welcome Dashboard</h1>
-                <p class="page-subtitle">Track your focus and clean study intervals</p>
+                <h1 class="page-title">Good morning! 👋</h1>
+                <p class="page-subtitle">Here's your study overview for today</p>
             </div>
+
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-header"><span class="stat-label">Total Time Tracked</span></div>
-                    <div class="stat-value" id="dashTotalTime">0 mins</div>
+                    <div class="stat-header">
+                        <span class="stat-label">Today's Study Time</span>
+                        <span class="stat-icon">⏱️</span>
+                    </div>
+                    <div class="stat-value" id="todayStudyTime">0h 0m</div>
+                    <div class="stat-change">↑ Keep going!</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-header"><span class="stat-label">Sessions Completed</span></div>
-                    <div class="stat-value" id="dashSessions">0</div>
+                    <div class="stat-header">
+                        <span class="stat-label">Current Streak</span>
+                        <span class="stat-icon">🔥</span>
+                    </div>
+                    <div class="stat-value" id="currentStreak">0 days</div>
+                    <div class="stat-change" style="color: var(--accent)">Consistency is key!</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Tasks Finished</span>
+                        <span class="stat-icon">✅</span>
+                    </div>
+                    <div class="stat-value" id="finishedTasks">0</div>
+                    <div class="stat-change" id="taskProgressPercent">0% completion</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Today's Focus Tasks</h2>
+                    </div>
+                    <div id="todayTasksList"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Weekly Activity</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="weeklyActivityChart" width="300" height="250"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -512,209 +1539,880 @@
         <div class="page" id="timer">
             <div class="page-header">
                 <h1 class="page-title">Study Timer</h1>
-                <p class="page-subtitle">Standard setup is locked. Access via Focus Mode button down below.</p>
-            </div>
-            <div class="timer-container">
-                <div class="timer-mode-tabs">
-                    <button class="timer-mode-tab active">Pomodoro</button>
-                    <button class="timer-mode-tab">Stopwatch</button>
-                </div>
-                <div class="timer-display">25:00</div>
-                <div class="timer-controls-locked">
-                    <button class="timer-btn timer-btn-disabled">Start</button>
-                    <button class="timer-btn timer-btn-disabled">Pause</button>
-                </div>
-                <p style="font-size: 12px; color: rgba(255,255,255,0.6);">⚠️ Layout controls locked. Enter Focus Mode below to activate controls.</p>
+                <p class="page-subtitle">Focus mode activated - minimize distractions</p>
             </div>
 
-            <div class="card">
-                <div class="card-header"><h3 class="card-title">Focus Module Configuration</h3></div>
-                <div class="form-group">
-                    <label class="form-label">Type Your Topic / Subject to Study</label>
-                    <input type="text" class="form-input" id="focusSubject" placeholder="e.g., Mathematics chapter 2, Science Revision...">
+            <div class="timer-container">
+                <div class="timer-mode-tabs">
+                    <button class="timer-mode-tab active" data-mode="pomodoro">Pomodoro</button>
+                    <button class="timer-mode-tab" data-mode="stopwatch">Stopwatch</button>
+                    <button class="timer-mode-tab" data-mode="custom">Custom</button>
                 </div>
-                <button class="btn btn-primary" id="triggerFocusMode">🎯 Enter Focus Mode</button>
+                <div class="timer-display" id="timerDisplay">25:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn timer-btn-start" id="startTimer">Start</button>
+                    <button class="timer-btn timer-btn-pause" id="pauseTimer">Pause</button>
+                    <button class="timer-btn timer-btn-reset" id="resetTimer">Reset</button>
+                </div>
+                <div class="timer-info">
+                    <div class="timer-info-item">
+                        <div class="timer-info-value" id="sessionCount">1</div>
+                        <div class="timer-info-label">Session</div>
+                    </div>
+                    <div class="timer-info-item">
+                        <div class="timer-info-value" id="breakCount">0</div>
+                        <div class="timer-info-label">Breaks</div>
+                    </div>
+                    <div class="timer-info-item">
+                        <div class="timer-info-value" id="todayTime">0m</div>
+                        <div class="timer-info-label">Today</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Session Settings</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Current Subject</label>
+                        <select class="form-select" id="currentSubject">
+                            <option value="">Select subject...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">What are you working on?</label>
+                        <input type="text" class="form-input" id="currentTask" placeholder="e.g., Chapter 5 - Calculus">
+                    </div>
+                    <button class="btn btn-primary" id="enterFocusMode">🎯 Enter Focus Mode</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Background Sounds</h3>
+                    </div>
+                    <div style="display: grid; gap: 12px;">
+                        <button class="btn btn-secondary">🌧️ Rain Sounds</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="tasks">
+            <div class="page-header">
+                <h1 class="page-title">Tasks & Goals</h1>
+                <p class="page-subtitle">Manage your micro-tasks and learning goals</p>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">All Tasks</h2>
+                    <button class="btn btn-primary" id="addTaskBtn">+ Add Task</button>
+                </div>
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+                <div class="task-list" id="tasksList"></div>
             </div>
         </div>
 
         <div class="page" id="calendar">
             <div class="page-header">
-                <h1 class="page-title">Calendar System</h1>
+                <h1 class="page-title">Calendar Schedule</h1>
+                <p class="page-subtitle">Map out your assignment dates and test intervals</p>
             </div>
             <div class="card">
                 <div class="calendar-header">
-                    <h2 id="calendarMonthYear">May 2026</h2>
+                    <h2 class="calendar-title" id="calendarMonthYear">May 2026</h2>
+                    <div class="calendar-nav">
+                        <button class="btn btn-secondary btn-sm" id="prevMonth">←</button>
+                        <button class="btn btn-secondary btn-sm" id="nextMonth">→</button>
+                    </div>
                 </div>
                 <div class="calendar-grid" id="calendarGrid"></div>
             </div>
         </div>
 
+        <div class="page" id="notes">
+            <div class="page-header">
+                <h1 class="page-title">Smart Notebook</h1>
+                <p class="page-subtitle">Document theories, definitions, and code modules</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px;">
+                <div class="card" style="padding: 16px;">
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 16px;" id="newNoteBtn">+ New Note</button>
+                    <div id="notesSidebarList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <input type="text" class="form-input" id="noteTitle" placeholder="Untitled Note" style="font-size: 20px; font-weight: 700; border: none; background: transparent; padding: 0;">
+                        <div class="task-actions">
+                            <button class="btn btn-primary btn-sm" id="saveNoteBtn">Save</button>
+                            <button class="btn btn-danger btn-sm" id="deleteNoteBtn">Delete</button>
+                        </div>
+                    </div>
+                    <div class="notes-editor">
+                        <div class="notes-toolbar">
+                            <button title="Bold"><b>B</b></button>
+                            <button title="Italic"><i>I</i></button>
+                            <button title="Underline"><u>U</u></button>
+                            <button title="Heading">H1</button>
+                            <button title="List">• List</button>
+                            <button title="Highlight">🖍️</button>
+                        </div>
+                        <div class="notes-content" contenteditable="true" id="noteContent">
+                            Start typing your notes here...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="flashcards">
+            <div class="page-header">
+                <h1 class="page-title">Flashcards</h1>
+                <p class="page-subtitle">Create and review flashcards</p>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Review Session</h2>
+                    <button class="btn btn-primary" id="addFlashcardBtn">+ New Flashcard</button>
+                </div>
+                <div id="flashcardContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎴</div>
+                        <div class="empty-state-text">No flashcards yet. Create your first one!</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Flashcard Decks</h2>
+                </div>
+                <div id="flashcardDecks"></div>
+            </div>
+        </div>
+
+        <div class="page" id="revision">
+            <div class="page-header">
+                <h1 class="page-title">Revision System</h1>
+                <p class="page-subtitle">Spaced repetition for better retention</p>
+            </div>
+            <div class="ai-suggestion">
+                <div class="ai-badge">
+                    <span>🤖</span> <span>AI REVISION SCHEDULE</span>
+                </div>
+                <div class="ai-content">
+                    <p style="margin-bottom: 12px;"><strong>Topics due for revision today:</strong></p>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>Math - Quadratic Equations (Last reviewed 5 days ago)</li>
+                        <li>Physics - Newton's Laws (Last reviewed 7 days ago)</li>
+                        <li>Chemistry - Periodic Table (Last reviewed 2 days ago)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Revision Calendar</h2>
+                </div>
+                <div id="revisionSchedule"></div>
+            </div>
+        </div>
+
+        <div class="page" id="analytics">
+            <div class="page-header">
+                <h1 class="page-title">Deep Analytics</h1>
+                <p class="page-subtitle">Real-time data loops on your focus intervals</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Study Hours</div>
+                    <div class="stat-value" id="totalStudyHours">0h</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Best Study Time</div>
+                    <div class="stat-value" id="bestStudyTime">9-11 AM</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Monthly Focus Trend</h2>
+                </div>
+                <canvas id="monthlyChart" width="600" height="200" style="width: 100%; height: 200px;"></canvas>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Learning Feedback Insights</h2>
+                </div>
+                <div class="ai-content">
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>⚠️ Your study density drops on Thursday afternoons. Consider scheduling shorter sprints.</li>
+                        <li>💡 Coding subject nodes receive high focus lengths, while structural subjects require tracking breaks.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="achievements">
+            <div class="page-header">
+                <h1 class="page-title">Achievements</h1>
+                <p class="page-subtitle">Track your progress and unlock rewards</p>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Level Progress</h2>
+                </div>
+                <div style="padding: 20px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="font-size: 18px; font-weight: 700;">Level <span id="achievementLevel">1</span></span>
+                        <span style="color: var(--text-secondary);"><span id="achievementXP">0</span> / <span id="achievementNextLevel">100</span> XP</span>
+                    </div>
+                    <div class="progress-bar" style="height: 12px;">
+                        <div class="progress-fill" id="xpProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Your Achievements</h2>
+                    <span class="stat-change"><span id="unlockedCount">0</span> / <span id="totalCount">0</span> unlocked</span>
+                </div>
+                <div class="achievements-grid" id="achievementsList"></div>
+            </div>
+        </div>
+
         <div class="page" id="ai">
             <div class="page-header">
-                <h1 class="page-title">AI Study Companion</h1>
-                <p class="page-subtitle">Ask questions, plan schedules, or clear doubts instantly.</p>
+                <h1 class="page-title">AI Study Assistant</h1>
+                <p class="page-subtitle">Your personal AI tutor and study companion</p>
             </div>
+
             <div class="ai-chat-container">
-                <div class="ai-chat-messages" id="chatArea">
-                    <div class="message assistant">Hello! I am your AI system assistant. Ready to help break down your topics or plan study schedules. Ask me anything!</div>
+                <div class="ai-chat-sidebar">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 700;">Chat History</h3>
+                        <button class="btn btn-primary btn-sm" id="newChatBtn">+ New</button>
+                    </div>
+                    <div id="chatHistoryList"></div>
+
+                    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">AI Features</h3>
+                        <div class="ai-feature-card" data-action="study-plan">
+                            <div class="ai-feature-icon">📅</div>
+                            <div class="ai-feature-title">Smart Study Plan</div>
+                            <div class="ai-feature-desc">Generate an optimized schedule based on your workload.</div>
+                        </div>
+                        <div class="ai-feature-card" data-action="weak-areas">
+                            <div class="ai-feature-icon">🎯</div>
+                            <div class="ai-feature-title">Weak Area Analysis</div>
+                            <div class="ai-feature-desc">Discover topics needing review based on performance loops.</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="ai-chat-input-container">
-                    <textarea class="ai-chat-input" id="chatInput" rows="1" placeholder="Type a message..."></textarea>
-                    <button class="ai-send-btn" id="sendChatBtn">Send</button>
+
+                <div class="ai-chat-main">
+                    <div class="ai-chat-messages" id="aiChatMessages">
+                        <div class="ai-message assistant">
+                            <div class="ai-message-avatar assistant">✨</div>
+                            <div class="ai-message-content">
+                                <div class="ai-message-header">
+                                    <span class="ai-message-name">StudyFlow AI</span>
+                                    <span class="ai-message-time">Now</span>
+                                </div>
+                                <div class="ai-message-text">
+                                    <p>Hello! I am your AI study companion. I can help you with:</p>
+                                    <ul style="margin-left: 20px; margin-top: 8px; line-height: 1.8;">
+                                        <li>Answering your study-related questions</li>
+                                        <li>Analyzing your study patterns</li>
+                                    </ul>
+                                    <p style="margin-top: 12px;">Ask me anything or click on the quick actions below!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-chat-input-container">
+                        <div class="ai-chat-quick-actions">
+                            <button class="ai-quick-btn" data-quick="What should I study today?">What should I study today?</button>
+                            <button class="ai-quick-btn" data-quick="Create a study plan">Create a study plan</button>
+                            <button class="ai-quick-btn" data-quick="How can I improve focus?">How can I improve focus?</button>
+                            <button class="ai-quick-btn" data-quick="Analyze my progress">Analyze my progress</button>
+                        </div>
+                        <div class="ai-chat-input-wrapper">
+                            <textarea class="ai-chat-input" id="aiChatInput" placeholder="Ask me anything about studying..." rows="1"></textarea>
+                            <button class="ai-send-btn" id="aiSendBtn">
+                                <span>➤</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div class="focus-mode" id="focusOverlay">
-        <h2 style="font-size: 24px; letter-spacing: 1px;" id="focusSessionHeading">FOCUS ACTIVE: Working...</h2>
-        <div class="focus-timer" id="overlayTimerDisplay">25:00</div>
+    <div class="focus-mode" id="focusMode">
+        <button class="btn btn-secondary focus-exit" id="exitFocus">Exit Focus Mode</button>
+        <div class="focus-timer" id="focusTimer">25:00</div>
+        <div class="focus-quote" id="focusQuote">"The secret of getting ahead is getting started."</div>
         <div class="focus-controls">
-            <button class="focus-btn_action btn-start" id="overlayStart">Start Focus</button>
-            <button class="focus-btn_action btn-pause" id="overlayPause">Pause</button>
-            <button class="focus-btn_action btn-exit" id="overlayExit">Exit & Save</button>
+            <button class="timer-btn timer-btn-start" id="focusStart">Start</button>
+            <button class="timer-btn timer-btn-pause" id="focusPause">Pause</button>
+        </div>
+    </div>
+
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Task</h2>
+                <button class="modal-close" id="closeTaskModal">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Task Title</label>
+                <input type="text" class="form-input" id="taskTitle" placeholder="e.g., Complete Chapter 5">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select class="form-select" id="taskSubject">
+                    <option value="">Select subject...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select class="form-select" id="taskPriority">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Due Date</label>
+                <input type="date" class="form-input" id="taskDueDate">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelTaskBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveTaskBtn">Save Task</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="flashcardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Flashcard</h2>
+                <button class="modal-close" id="closeFlashcardModal">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Front (Question)</label>
+                <textarea class="form-textarea" id="flashcardFront" placeholder="Enter question..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Back (Answer)</label>
+                <textarea class="form-textarea" id="flashcardBack" placeholder="Enter answer..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select class="form-select" id="flashcardSubject">
+                    <option value="">Select subject...</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelFlashcardBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveFlashcardBtn">Save Flashcard</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- Core Navigation ---
+        // ==================== DATA STORAGE ====================
+        const Storage = {
+            get(key, defaultValue = null) {
+                try {
+                    const value = localStorage.getItem(key);
+                    return value ? JSON.parse(value) : defaultValue;
+                } catch (e) {
+                    return defaultValue;
+                }
+            },
+            set(key, value) {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+        };
+
+        // ==================== APP DATA ====================
+        const AppData = {
+            user: Storage.get('user', { level: 1, xp: 0, streak: 0, lastStudyDate: null, totalStudyMinutes: 0 }),
+            subjects: Storage.get('subjects', []),
+            tasks: Storage.get('tasks', []),
+            events: Storage.get('events', []),
+            studySessions: Storage.get('studySessions', []),
+            achievements: Storage.get('achievements', []),
+            notes: Storage.get('notes', []),
+            flashcards: Storage.get('flashcards', []),
+            revisionSchedule: Storage.get('revisionSchedule', []),
+            aiChats: Storage.get('aiChats', []),
+            currentChatId: Storage.get('currentChatId', null),
+            settings: Storage.get('settings', { pomodoroTime: 25, shortBreak: 5, longBreak: 15, autoBreak: true })
+        };
+
+        function saveData() {
+            Storage.set('user', AppData.user);
+            Storage.set('subjects', AppData.subjects);
+            Storage.set('tasks', AppData.tasks);
+            Storage.set('events', AppData.events);
+            Storage.set('studySessions', AppData.studySessions);
+            Storage.set('achievements', AppData.achievements);
+            Storage.set('notes', AppData.notes);
+            Storage.set('flashcards', AppData.flashcards);
+            Storage.set('revisionSchedule', AppData.revisionSchedule);
+            Storage.set('aiChats', AppData.aiChats);
+            Storage.set('currentChatId', AppData.currentChatId);
+        }
+
+        // ==================== NAVIGATION ====================
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('data-page');
+                
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 
-                this.classList.add('active');
-                document.getElementById(this.dataset.page).classList.add('active');
+                link.classList.add('active');
+                document.getElementById(pageId).classList.add('active');
+                
+                // Trigger page-specific logic
+                if (pageId === 'dashboard') updateDashboard();
+                if (pageId === 'analytics') updateAnalytics();
+                if (pageId === 'flashcards') renderFlashcards();
             });
         });
 
-        // --- Core App Storage Variable Engine ---
-        let totalTrackedMinutes = 0;
-        let totalSessionsCount = 0;
-        let timerInstance = null;
-        let focusTimerSeconds = 25 * 60; 
-        let isTimerRunning = false;
+        // ==================== TIMER ENGINE ====================
+        let timerInterval = null;
+        let timerRunning = false;
+        let timerSeconds = AppData.settings.pomodoroTime * 60;
+        let timerMode = 'pomodoro'; // pomodoro, stopwatch, custom
+        let sessionCount = 1;
+        let breakCount = 0;
+        let currentSessionStart = null;
 
-        const overlayTimerDisplay = document.getElementById('overlayTimerDisplay');
-        const focusSessionHeading = document.getElementById('focusSessionHeading');
-
-        // --- Focus Mode Core Engine Logic ---
-        document.getElementById('triggerFocusMode').addEventListener('click', () => {
-            let subject = document.getElementById('focusSubject').value.trim();
-            if (!subject) {
-                subject = "General Study";
-            }
-            focusSessionHeading.textContent = `FOCUS ACTIVE: ${subject}`;
-            document.getElementById('focusOverlay').classList.add('active');
-        });
-
-        function updateOverlayDisplay() {
-            let minutes = Math.floor(focusTimerSeconds / 60);
-            let seconds = focusTimerSeconds % 60;
-            overlayTimerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const displayStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = displayStr;
+            document.getElementById('focusTimer').textContent = displayStr;
         }
 
-        document.getElementById('overlayStart').addEventListener('click', () => {
-            if (isTimerRunning) return;
-            isTimerRunning = true;
-            timerInstance = setInterval(() => {
-                if (focusTimerSeconds > 0) {
-                    focusTimerSeconds--;
-                    updateOverlayDisplay();
+        function startTimer() {
+            if (timerRunning) return;
+            timerRunning = true;
+            currentSessionStart = Date.now();
+            
+            timerInterval = setInterval(() => {
+                if (timerMode === 'stopwatch') {
+                    timerSeconds++;
                 } else {
-                    clearInterval(timerInstance);
-                    isTimerRunning = false;
-                    alert("Focus session complete! Excellent work.");
-                    exitAndSaveSession(25);
+                    timerSeconds--;
+                    if (timerSeconds <= 0) {
+                        completeSession();
+                    }
                 }
+                updateTimerDisplay();
+                updateTodayTime();
             }, 1000);
-        });
 
-        document.getElementById('overlayPause').addEventListener('click', () => {
-            clearInterval(timerInstance);
-            isTimerRunning = false;
-        });
-
-        document.getElementById('overlayExit').addEventListener('click', () => {
-            let minutesSpent = 25 - Math.ceil(focusTimerSeconds / 60);
-            if(minutesSpent < 1 && minutesSpent >= 0 && focusTimerSeconds < 25*60) { minutesSpent = 1; } 
-            exitAndSaveSession(minutesSpent);
-        });
-
-        function exitAndSaveSession(minutes) {
-            clearInterval(timerInstance);
-            isTimerRunning = false;
-            
-            if (minutes > 0) {
-                totalTrackedMinutes += minutes;
-                totalSessionsCount++;
-                document.getElementById('dashTotalTime').textContent = `${totalTrackedMinutes} mins`;
-                document.getElementById('dashSessions').textContent = totalSessionsCount;
-            }
-
-            focusTimerSeconds = 25 * 60;
-            updateOverlayDisplay();
-            document.getElementById('focusOverlay').classList.remove('active');
+            document.getElementById('startTimer').textContent = 'Running...';
+            document.getElementById('focusStart').textContent = 'Running...';
         }
 
-        // --- Simple Calendar Generator Engine ---
-        function createCalendar() {
-            const grid = document.getElementById('calendarGrid');
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            grid.innerHTML = '';
+        function pauseTimer() {
+            if (!timerRunning) return;
+            clearInterval(timerInterval);
+            timerRunning = false;
             
-            weekdays.forEach(day => {
-                const header = document.createElement('div');
-                header.className = 'calendar-day-header';
-                header.textContent = day;
-                grid.appendChild(header);
+            if (currentSessionStart) {
+                const duration = Math.floor((Date.now() - currentSessionStart) / 1000 / 60);
+                if (duration > 0) addStudySession(duration);
+                currentSessionStart = null;
+            }
+            
+            document.getElementById('startTimer').textContent = 'Start';
+            document.getElementById('focusStart').textContent = 'Start';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            if (timerMode === 'pomodoro') {
+                timerSeconds = AppData.settings.pomodoroTime * 60;
+            } else if (timerMode === 'stopwatch') {
+                timerSeconds = 0;
+            } else {
+                timerSeconds = 25 * 60;
+            }
+            updateTimerDisplay();
+        }
+
+        function completeSession() {
+            pauseTimer();
+            const duration = AppData.settings.pomodoroTime;
+            addStudySession(duration);
+            sessionCount++;
+            document.getElementById('sessionCount').textContent = sessionCount;
+            addXP(25);
+            showNotification('Session Complete! 🎉', 'Great job! Take a break.');
+            
+            if (AppData.settings.autoBreak) {
+                breakCount++;
+                document.getElementById('breakCount').textContent = breakCount;
+                timerSeconds = (breakCount % 4 === 0 ? AppData.settings.longBreak : AppData.settings.shortBreak) * 60;
+                updateTimerDisplay();
+            } else {
+                resetTimer();
+            }
+        }
+
+        function addStudySession(minutes) {
+            const today = new Date().toDateString();
+            AppData.studySessions.push({
+                date: today,
+                duration: minutes,
+                subject: document.getElementById('currentSubject').value,
+                task: document.getElementById('currentTask').value,
+                timestamp: Date.now()
+            });
+            AppData.user.totalStudyMinutes += minutes;
+
+            // Handle Streak
+            if (AppData.user.lastStudyDate !== today) {
+                const lastDate = new Date(AppData.user.lastStudyDate);
+                const currentDate = new Date(today);
+                const diffDays = Math.floor((currentDate - lastDate) / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) {
+                    AppData.user.streak++;
+                } else if (diffDays > 1 || !AppData.user.lastStudyDate) {
+                    AppData.user.streak = 1;
+                }
+                AppData.user.lastStudyDate = today;
+            }
+            saveData();
+            updateDashboard();
+        }
+
+        function updateTodayTime() {
+            const today = new Date().toDateString();
+            const todaySessions = AppData.studySessions.filter(s => s.date === today);
+            let todayMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+            document.getElementById('todayTime').textContent = `${todayMinutes}m`;
+        }
+
+        document.getElementById('startTimer').addEventListener('click', startTimer);
+        document.getElementById('pauseTimer').addEventListener('click', pauseTimer);
+        document.getElementById('resetTimer').addEventListener('click', resetTimer);
+
+        // ==================== TASKS CONTROLLER ====================
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            const todayTasksList = document.getElementById('todayTasksList');
+            if (!tasksList) return;
+
+            tasksList.innerHTML = '';
+            todayTasksList.innerHTML = '';
+
+            const todayStr = new Date().toDateString();
+
+            AppData.tasks.forEach((task, index) => {
+                const div = createTaskElement(task, index);
+                tasksList.appendChild(div);
+
+                if (new Date(task.dueDate).toDateString() === todayStr) {
+                    const todayTaskEl = createTaskElement(task, index);
+                    todayTasksList.appendChild(todayTaskEl);
+                }
             });
 
-            // Blank padding layout spacers
-            for(let i=0; i<5; i++) {
-                grid.appendChild(document.createElement('div'));
-            }
-
-            for(let d=1; d<=31; d++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day';
-                if(d === 20) dayCell.classList.add('today'); 
-                dayCell.textContent = d;
-                grid.appendChild(dayCell);
+            if (AppData.tasks.length === 0) {
+                tasksList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">No tasks yet. Add your first one!</div></div>';
             }
         }
-        createCalendar();
 
-        // --- AI System Core Responses Handler ---
-        document.getElementById('sendChatBtn').addEventListener('click', () => {
-            const input = document.getElementById('chatInput');
-            const area = document.getElementById('chatArea');
-            if (!input.value.trim()) return;
+        function createTaskElement(task, index) {
+            const div = document.createElement('div');
+            div.className = `task-item ${task.completed ? 'completed' : ''}`;
+            const subject = AppData.subjects.find(s => s.id === task.subject);
+            
+            div.innerHTML = `
+                <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-index="${index}"></div>
+                <div class="task-content">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-meta">
+                        <span>${subject ? subject.name : 'No subject'}</span>
+                        <span>Due: ${new Date(task.dueDate).toLocaleDateString()}</span>
+                        <span class="task-priority ${task.priority}">${task.priority}</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="btn btn-danger btn-sm" data-index="${index}">Delete</button>
+                </div>
+            `;
 
-            const userDiv = document.createElement('div');
-            userDiv.className = 'message user';
-            userDiv.textContent = input.value;
-            area.appendChild(userDiv);
+            div.querySelector('.task-checkbox').addEventListener('click', () => {
+                task.completed = !task.completed;
+                if(task.completed) addXP(15);
+                saveData();
+                renderTasks();
+                updateDashboard();
+            });
 
-            const userText = input.value.toLowerCase();
-            input.value = '';
+            return div;
+        }
 
-            setTimeout(() => {
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'message assistant';
-                
-                if (userText.includes('plan') || userText.includes('schedule')) {
-                    aiDiv.textContent = "Setting aside structured 25-minute study intervals separated by short 5-minute clarity breaks maximizes memory focus. Try organizing your critical concept blocks first.";
-                } else if (userText.includes('motivation') || userText.includes('focus')) {
-                    aiDiv.textContent = "Consistency is built step by step, section by section. Every single session you complete reinforces your workflow and targets.";
-                } else {
-                    aiDiv.textContent = "Understood. Let's isolate the topic details, structure the problem points, and tackle it step-by-step.";
-                }
-                
-                area.appendChild(aiDiv);
-                area.scrollTop = area.scrollHeight;
-            }, 700);
+        // ==================== FLASHCARDS MECHANICAL FLIP ====================
+        function renderFlashcards() {
+            const decks = document.getElementById('flashcardDecks');
+            if (!decks) return;
+            decks.innerHTML = '';
+
+            const subjectsMap = {};
+            AppData.flashcards.forEach(card => {
+                if (!subjectsMap[card.subject]) subjectsMap[card.subject] = [];
+                subjectsMap[card.subject].push(card);
+            });
+
+            Object.keys(subjectsMap).forEach(subId => {
+                const cards = subjectsMap[subId];
+                const subject = AppData.subjects.find(s => s.id === subId);
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 class="card-title">${subject ? subject.name : 'General'}</h3>
+                            <div class="task-meta"><span>${cards.length} cards</span></div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-primary btn-sm">Review</button>
+                        </div>
+                    </div>
+                `;
+                decks.appendChild(div);
+            });
+
+            if (AppData.flashcards.length === 0) {
+                decks.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎴</div><div class="empty-state-text">No flashcard decks yet</div></div>';
+            }
+        }
+
+        document.getElementById('addFlashcardBtn').addEventListener('click', () => {
+            document.getElementById('flashcardModal').classList.add('active');
+            updateSubjectSelects();
         });
+        document.getElementById('closeFlashcardModal').addEventListener('click', () => {
+            document.getElementById('flashcardModal').classList.remove('active');
+        });
+        document.getElementById('cancelFlashcardBtn').addEventListener('click', () => {
+            document.getElementById('flashcardModal').classList.remove('active');
+        });
+
+        document.getElementById('saveFlashcardBtn').addEventListener('click', () => {
+            const flashcard = {
+                id: Date.now(),
+                front: document.getElementById('flashcardFront').value,
+                back: document.getElementById('flashcardBack').value,
+                subject: document.getElementById('flashcardSubject').value,
+                createdAt: Date.now()
+            };
+
+            if (!flashcard.front || !flashcard.back) {
+                alert('Please fill in both front and back');
+                return;
+            }
+
+            AppData.flashcards.push(flashcard);
+            saveData();
+            renderFlashcards();
+            document.getElementById('flashcardModal').classList.remove('active');
+            document.getElementById('flashcardFront').value = '';
+            document.getElementById('flashcardBack').value = '';
+        });
+
+        // ==================== DASHBOARD OVERVIEW RENDERER ====================
+        function updateDashboard() {
+            const today = new Date().toDateString();
+            const todaySessions = AppData.studySessions.filter(s => s.date === today);
+            const todayMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+            
+            const hours = Math.floor(todayMinutes / 60);
+            const mins = todayMinutes % 60;
+            document.getElementById('todayStudyTime').textContent = `${hours}h ${mins}m`;
+
+            document.getElementById('currentStreak').textContent = `${AppData.user.streak} days`;
+            document.getElementById('sidebarStreak').textContent = `${AppData.user.streak}🔥`;
+            document.getElementById('sidebarLevel').textContent = AppData.user.level;
+            document.getElementById('sidebarXP').textContent = AppData.user.xp;
+
+            const finished = AppData.tasks.filter(t => t.completed).length;
+            document.getElementById('finishedTasks').textContent = finished;
+            
+            const taskRate = AppData.tasks.length > 0 ? Math.round((finished / AppData.tasks.length) * 100) : 0;
+            document.getElementById('taskProgressPercent').textContent = `${taskRate}% completion rate`;
+
+            renderTasks();
+            renderWeeklyChart();
+        }
+
+        function renderWeeklyChart() {
+            const canvas = document.getElementById('weeklyActivityChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const data = new Array(7).fill(0);
+
+            // Populate weekly values mapping
+            const today = new Date();
+            for (let i = 0; i < 7; i++) {
+                const d = new Date();
+                d.setDate(today.getDate() - today.getDay() + i);
+                const dStr = d.toDateString();
+                const dayMinutes = AppData.studySessions
+                    .filter(s => s.date === dStr)
+                    .reduce((sum, s) => sum + s.duration, 0);
+                data[i] = dayMinutes / 60;
+            }
+
+            const barWidth = canvas.width / 7;
+            const maxVal = Math.max(...data, 1);
+
+            data.forEach((value, index) => {
+                const barHeight = (value / maxVal) * (canvas.height - 50);
+                const x = index * barWidth + 20;
+                const y = canvas.height - barHeight - 30;
+
+                const gradient = ctx.createLinearGradient(0, y, 0, canvas.height - 30);
+                gradient.addColorStop(0, '#6366f1');
+                gradient.addColorStop(1, '#4f46e5');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, y, barWidth - 40, barHeight);
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(days[index], x + (barWidth - 40) / 2, canvas.height - 10);
+
+                if (value > 0) {
+                    ctx.fillStyle = '#f1f5f9';
+                    ctx.font = 'bold 14px Inter';
+                    ctx.fillText(value.toFixed(1) + 'h', x + (barWidth - 40) / 2, y - 10);
+                }
+            });
+        }
+
+        // ==================== ANALYTICS PROCESSING LOOP ====================
+        function updateAnalytics() {
+            const totalHours = Math.floor(AppData.user.totalStudyMinutes / 60);
+            document.getElementById('totalStudyHours').textContent = `${totalHours}h`;
+
+            const hourCounts = new Array(24).fill(0);
+            AppData.studySessions.forEach(s => {
+                const hour = new Date(s.timestamp).getHours();
+                hourCounts[hour] += s.duration;
+            });
+            const bestHour = hourCounts.indexOf(Math.max(...hourCounts));
+            if (bestHour >= 0 && hourCounts[bestHour] > 0) {
+                const period = bestHour >= 12 ? 'PM' : 'AM';
+                const hour12 = bestHour % 12 || 12;
+                document.getElementById('bestStudyTime').textContent = `${hour12} ${period}`;
+            }
+
+            renderMonthlyChart();
+        }
+
+        function renderMonthlyChart() {
+            const canvas = document.getElementById('monthlyChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw baseline placeholder path for trend loops
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+        }
+
+        // ==================== SYSTEMS MECHANICS ====================
+        function addXP(amount) {
+            AppData.user.xp += amount;
+            const requiredXP = AppData.user.level * 100;
+            if (AppData.user.xp >= requiredXP) {
+                AppData.user.level++;
+                AppData.user.xp -= requiredXP;
+                showNotification('Level Up! 🎉', `You reached level ${AppData.user.level}!`);
+            }
+            saveData();
+            updateDashboard();
+            checkAchievements();
+        }
+
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => { notification.remove(); }, 4000);
+        }
+
+        function checkAchievements() {
+            // Check milestones dynamically inside data collections
+        }
+
+        function updateSubjectSelects() {
+            const selects = ['currentSubject', 'taskSubject', 'flashcardSubject'];
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const val = el.value;
+                el.innerHTML = '<option value="">Select subject...</option>';
+                AppData.subjects.forEach(sub => {
+                    el.innerHTML += `<option value="${sub.id}">${sub.name}</option>`;
+                });
+                el.value = val;
+            });
+        }
+
+        // Focus Mode Transitions
+        document.getElementById('enterFocusMode').addEventListener('click', () => {
+            document.getElementById('focusMode').classList.add('active');
+        });
+        document.getElementById('exitFocus').addEventListener('click', () => {
+            document.getElementById('focusMode').classList.remove('active');
+        });
+
+        // Initialize Context
+        function init() {
+            // Seed base tracking subjects if empty
+            if (AppData.subjects.length === 0) {
+                AppData.subjects = [
+                    { id: '1', name: 'Mathematics' },
+                    { id: '2', name: 'Computer Science' },
+                    { id: '3', name: 'Social Psychology' }
+                ];
+                saveData();
+            }
+            updateSubjectSelects();
+            updateDashboard();
+            console.log('✨ StudyFlow initialized successfully!');
+        }
+
+        init();
     </script>
 </body>
 </html>
