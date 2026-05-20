@@ -220,7 +220,6 @@
             border-radius: 12px;
             padding: 4px;
             margin-bottom: 24px;
-            /* LOCKING TABS FROM UNWANTED INTERACTION */
             pointer-events: none;
             opacity: 0.6;
         }
@@ -248,7 +247,6 @@
         }
 
         .timer-controls-locked {
-            /* MAKING CASUAL START/STOP UNTOUCHABLE */
             pointer-events: none;
             opacity: 0.5;
             margin-bottom: 16px;
@@ -265,7 +263,6 @@
             margin: 0 6px;
         }
 
-        .timer-btn-start { background: white; color: var(--primary); }
         .timer-btn-disabled { background: rgba(255, 255, 255, 0.1); color: rgba(255,255,255,0.4); border: 1px dashed rgba(255,255,255,0.2); }
 
         .form-group {
@@ -279,7 +276,7 @@
             font-size: 14px;
         }
 
-        .form-input, .form-select {
+        .form-input {
             width: 100%;
             padding: 12px 16px;
             background: var(--bg-tertiary);
@@ -445,7 +442,7 @@
             gap: 16px;
         }
 
-        .focus-btn-action {
+        .focus-btn_action {
             padding: 16px 40px;
             font-size: 16px;
             font-weight: 700;
@@ -533,13 +530,8 @@
             <div class="card">
                 <div class="card-header"><h3 class="card-title">Focus Module Configuration</h3></div>
                 <div class="form-group">
-                    <label class="form-label">Select Target Topic / Subject</label>
-                    <select class="form-select" id="focusSubject">
-                        <option value="General Study">General Study</option>
-                        <option value="Mathematics">Mathematics</option>
-                        <option value="Science">Science</option>
-                        <option value="Computer Coding">Computer Coding</option>
-                    </select>
+                    <label class="form-label">Type Your Topic / Subject to Study</label>
+                    <input type="text" class="form-input" id="focusSubject" placeholder="e.g., Mathematics chapter 2, Science Revision...">
                 </div>
                 <button class="btn btn-primary" id="triggerFocusMode">🎯 Enter Focus Mode</button>
             </div>
@@ -564,7 +556,7 @@
             </div>
             <div class="ai-chat-container">
                 <div class="ai-chat-messages" id="chatArea">
-                    <div class="message assistant">Hello! I am your AI system assistant. How can I help clarify your study concepts or organize your work schedules today?</div>
+                    <div class="message assistant">Hello! I am your AI system assistant. Ready to help break down your topics or plan study schedules. Ask me anything!</div>
                 </div>
                 <div class="ai-chat-input-container">
                     <textarea class="ai-chat-input" id="chatInput" rows="1" placeholder="Type a message..."></textarea>
@@ -575,7 +567,7 @@
     </main>
 
     <div class="focus-mode" id="focusOverlay">
-        <h2 style="font-size: 24px; tracking: 1px;" id="focusSessionHeading">FOCUS ACTIVE: Working...</h2>
+        <h2 style="font-size: 24px; letter-spacing: 1px;" id="focusSessionHeading">FOCUS ACTIVE: Working...</h2>
         <div class="focus-timer" id="overlayTimerDisplay">25:00</div>
         <div class="focus-controls">
             <button class="focus-btn_action btn-start" id="overlayStart">Start Focus</button>
@@ -608,7 +600,10 @@
 
         // --- Focus Mode Core Engine Logic ---
         document.getElementById('triggerFocusMode').addEventListener('click', () => {
-            const subject = document.getElementById('focusSubject').value;
+            let subject = document.getElementById('focusSubject').value.trim();
+            if (!subject) {
+                subject = "General Study";
+            }
             focusSessionHeading.textContent = `FOCUS ACTIVE: ${subject}`;
             document.getElementById('focusOverlay').classList.add('active');
         });
@@ -641,7 +636,6 @@
         });
 
         document.getElementById('overlayExit').addEventListener('click', () => {
-            // Deduct session calculations dynamically on exit check
             let minutesSpent = 25 - Math.ceil(focusTimerSeconds / 60);
             if(minutesSpent < 1 && minutesSpent >= 0 && focusTimerSeconds < 25*60) { minutesSpent = 1; } 
             exitAndSaveSession(minutesSpent);
@@ -654,18 +648,16 @@
             if (minutes > 0) {
                 totalTrackedMinutes += minutes;
                 totalSessionsCount++;
-                // Update Dashboard metrics instantly
                 document.getElementById('dashTotalTime').textContent = `${totalTrackedMinutes} mins`;
                 document.getElementById('dashSessions').textContent = totalSessionsCount;
             }
 
-            // Reset Timer configurations back to standard default parameters
             focusTimerSeconds = 25 * 60;
             updateOverlayDisplay();
             document.getElementById('focusOverlay').classList.remove('active');
         }
 
-        // --- Simple Dynamic Calendar Generator Engine ---
+        // --- Simple Calendar Generator Engine ---
         function createCalendar() {
             const grid = document.getElementById('calendarGrid');
             const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -678,7 +670,7 @@
                 grid.appendChild(header);
             });
 
-            // Blank spacer tracking padding for accurate visualization 
+            // Blank padding layout spacers
             for(let i=0; i<5; i++) {
                 grid.appendChild(document.createElement('div'));
             }
@@ -686,7 +678,7 @@
             for(let d=1; d<=31; d++) {
                 const dayCell = document.createElement('div');
                 dayCell.className = 'calendar-day';
-                if(d === 20) dayCell.classList.add('today'); // Current simulation baseline placeholder
+                if(d === 20) dayCell.classList.add('today'); 
                 dayCell.textContent = d;
                 grid.appendChild(dayCell);
             }
@@ -699,7 +691,6 @@
             const area = document.getElementById('chatArea');
             if (!input.value.trim()) return;
 
-            // Render User Text Content Bubble
             const userDiv = document.createElement('div');
             userDiv.className = 'message user';
             userDiv.textContent = input.value;
@@ -708,17 +699,16 @@
             const userText = input.value.toLowerCase();
             input.value = '';
 
-            // Automated Simulation Engine Response Handling Routine
             setTimeout(() => {
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'message assistant';
                 
                 if (userText.includes('plan') || userText.includes('schedule')) {
-                    aiDiv.textContent = "Based on structural criteria: I recommend setting aside three distinct 45-minute focus blocks separated by 10-minute mental cooldown breaks. Focus on your most complex conceptual problem areas first.";
+                    aiDiv.textContent = "Setting aside structured 25-minute study intervals separated by short 5-minute clarity breaks maximizes memory focus. Try organizing your critical concept blocks first.";
                 } else if (userText.includes('motivation') || userText.includes('focus')) {
-                    aiDiv.textContent = "True momentum does not depend on immediate feelings; consistency creates actions. Every isolated milestone clear brings you systematically closer to structural mastery.";
+                    aiDiv.textContent = "Consistency is built step by step, section by section. Every single session you complete reinforces your workflow and targets.";
                 } else {
-                    aiDiv.textContent = "Understood. Let's isolate the concept, break down its component core parts, and process the solution structurally step-by-step.";
+                    aiDiv.textContent = "Understood. Let's isolate the topic details, structure the problem points, and tackle it step-by-step.";
                 }
                 
                 area.appendChild(aiDiv);
